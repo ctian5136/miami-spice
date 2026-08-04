@@ -3,8 +3,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  // paste the config object from the Firebase console here
-  // Project settings (gear icon) -> General -> Your apps -> Web app (</>)
+  apiKey: "AIzaSyAqB8eBOihVbVkSRevVwxK-6Z-uhMMgDxw",
+  authDomain: "miami-spice-tracker.firebaseapp.com",
+  projectId: "miami-spice-tracker",
+  storageBucket: "miami-spice-tracker.firebasestorage.app",
+  messagingSenderId: "87621989020",
+  appId: "1:87621989020:web:5014a40e656a4206423359",
+  measurementId: "G-ZKVW3Q5B66",
 };
 
 const app = initializeApp(firebaseConfig);
