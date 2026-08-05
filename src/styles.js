@@ -76,15 +76,16 @@ export const styles = {
   },
 
   posterGrid: {
-    display: "grid", gridTemplateColumns: "1fr 3px 260px", minHeight: 300,
-    maxWidth: 1080, margin: "0 auto",
+    display: "grid", gridTemplateColumns: "1fr 3px 260px", minHeight: 340,
+    width: "100%",
   },
   posterMain: {
     background: colors.accent, position: "relative", overflow: "hidden",
-    display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 0 0 34px",
+    display: "flex", flexDirection: "column", justifyContent: "center",
+    padding: "36px 0 24px 48px",
   },
   posterKicker: {
-    position: "absolute", top: 22, left: 34,
+    position: "absolute", top: 34, left: 48,
     fontSize: 12, fontWeight: 700, letterSpacing: "0.4em", textTransform: "uppercase",
     color: colors.cream, opacity: 0.85,
   },
@@ -99,11 +100,11 @@ export const styles = {
   },
   posterRail: { background: colors.terracotta },
   posterMeta: {
-    background: colors.cream, padding: "54px 22px 24px",
+    background: colors.cream, padding: "64px 28px 24px",
     display: "flex", flexDirection: "column", position: "relative",
   },
   posterProfile: {
-    position: "absolute", top: 14, right: 14, zIndex: 4,
+    position: "absolute", top: 24, right: 24, zIndex: 4,
     width: 34, height: 34, borderRadius: 999, padding: 0, overflow: "hidden",
     background: colors.accentSoftBg, border: `1.5px solid ${colors.accent}`,
     display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
@@ -111,7 +112,7 @@ export const styles = {
   posterProfileImg: { width: "100%", height: "100%", objectFit: "cover" },
   posterOverlay: { position: "fixed", inset: 0, zIndex: 9, background: "transparent" },
   posterProfileMenu: {
-    position: "absolute", top: 56, right: 14, zIndex: 10, width: 208,
+    position: "absolute", top: 66, right: 24, zIndex: 10, width: 208,
     background: "#fff", border: `1px solid ${colors.border}`, borderRadius: 10,
     boxShadow: "0 10px 28px rgba(43,24,10,0.18)", overflow: "hidden",
   },
