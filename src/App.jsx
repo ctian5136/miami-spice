@@ -151,10 +151,10 @@ export default function App() {
 
       <div style={{ ...styles.compactBar, ...(compactVisible ? styles.compactBarVisible : {}) }}>
         <div style={styles.compactWord}>
-          <span style={styles.compactWordKicker}>Miami</span>Spice
+          <span style={styles.compactWordKicker}>Miami</span>SPICE
         </div>
         <div style={{ position: "relative" }}>
-          <button style={styles.posterProfile} onClick={() => setProfileOpen((o) => !o)}>
+          <button style={styles.compactAvatarBtn} onClick={() => setProfileOpen((o) => !o)}>
             {user.photoURL ? (
               <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
             ) : (
@@ -199,15 +199,18 @@ export default function App() {
 
       <div style={styles.appShell}>
         <div style={styles.appBody}>
-          <Sidebar
-            tab={tab}
-            setTab={setTab}
-            myLists={myLists}
-            openListId={openListId}
-            onOpenList={setOpenListId}
-            incomingCount={incomingCount}
-            top={compactVisible ? 68 : 16}
-          />
+          <div style={styles.sidebarColumn}>
+            <div style={{ ...styles.sidebarSticky, top: compactVisible ? 84 : 16 }}>
+              <Sidebar
+                tab={tab}
+                setTab={setTab}
+                myLists={myLists}
+                openListId={openListId}
+                onOpenList={setOpenListId}
+                incomingCount={incomingCount}
+              />
+            </div>
+          </div>
 
           <div style={styles.mainCol}>
             {tab === "browse" && (

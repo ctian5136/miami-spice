@@ -140,13 +140,14 @@ export const styles = {
   },
 
   appShell: { maxWidth: 1280, margin: "0 auto" },
-  appBody: { display: "flex", alignItems: "flex-start" },
+  appBody: { display: "flex" },
   mainCol: { flex: 1, minWidth: 0 },
 
-  sidebarPanel: {
-    width: 216, flexShrink: 0, background: colors.cream, padding: "20px 12px 32px",
-    borderRight: `1px solid ${colors.border}`, position: "sticky", alignSelf: "flex-start",
-    transition: "top 0.2s ease",
+  sidebarColumn: {
+    width: 216, flexShrink: 0, background: colors.cream, borderRight: `1px solid ${colors.border}`,
+  },
+  sidebarSticky: {
+    position: "sticky", padding: "20px 12px 32px", transition: "top 0.2s ease",
   },
   navRow: {
     display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 8,
@@ -169,13 +170,18 @@ export const styles = {
 
   compactBar: {
     position: "fixed", top: 0, left: 0, right: 0, zIndex: 30,
-    background: colors.accent, padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between",
+    background: colors.accent, padding: "20px 28px", display: "flex", alignItems: "center", justifyContent: "space-between",
     transform: "translateY(-100%)", opacity: 0, transition: "transform 0.25s ease, opacity 0.25s ease",
     pointerEvents: "none",
   },
   compactBarVisible: { transform: "translateY(0)", opacity: 1, pointerEvents: "auto" },
-  compactWord: { fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 16, color: colors.cream, letterSpacing: "-0.01em" },
+  compactWord: { fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 20, color: colors.cream, letterSpacing: "-0.01em" },
   compactWordKicker: { opacity: 0.7, fontWeight: 700, fontSize: 11, marginRight: 6, textTransform: "uppercase", letterSpacing: "0.2em" },
+  compactAvatarBtn: {
+    width: 34, height: 34, borderRadius: 999, padding: 0, overflow: "hidden", flexShrink: 0,
+    background: colors.accentSoftBg, border: `1.5px solid ${colors.cream}`,
+    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+  },
 
   controls: { padding: "22px 24px 0" },
   chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 },

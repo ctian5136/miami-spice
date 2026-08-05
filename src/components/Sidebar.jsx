@@ -27,14 +27,14 @@ function FriendsIcon({ active }) {
   );
 }
 
-export default function Sidebar({ tab, setTab, myLists, openListId, onOpenList, incomingCount, top }) {
+export default function Sidebar({ tab, setTab, myLists, openListId, onOpenList, incomingCount }) {
   const goList = (id) => {
     setTab("mylists");
     onOpenList(id);
   };
 
   return (
-    <nav style={{ ...styles.sidebarPanel, top }}>
+    <nav>
       <button
         style={{ ...styles.navRow, ...(tab === "browse" ? styles.navRowActive : {}) }}
         onClick={() => setTab("browse")}
