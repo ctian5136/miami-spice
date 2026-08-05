@@ -1,6 +1,6 @@
 import React from "react";
 import { Star, MapPin, Heart, UtensilsCrossed, X } from "lucide-react";
-import { styles } from "../styles";
+import { styles, colors } from "../styles";
 
 export default function RestaurantCard({
   restaurant,
@@ -9,6 +9,7 @@ export default function RestaurantCard({
   onToggleWant,
   onMarkEaten,
   onRemove,
+  onOpenDetail,
 }) {
   const r = restaurant;
   const status = pick?.status;
@@ -17,16 +18,17 @@ export default function RestaurantCard({
     ...styles.card,
     ...(status === "want" ? styles.cardWant : {}),
     ...(status === "eaten" ? styles.cardEaten : {}),
+    ...(onOpenDetail ? { cursor: "pointer" } : {}),
   };
 
   return (
-    <div style={cardStyle}>
+    <div style={cardStyle} onClick={() => onOpenDetail?.(r)}>
       <div style={styles.cardTop}>
         <div style={styles.cardHead}>
           {r.stars > 0 && (
             <div style={styles.starRow}>
               {Array.from({ length: r.stars }).map((_, i) => (
-                <Star key={i} size={14} fill="#A9683F" color="#A9683F" strokeWidth={0} />
+                <Star key={i} size={14} fill={colors.accent} color={colors.accent} strokeWidth={0} />
               ))}
             </div>
           )}
@@ -61,7 +63,7 @@ export default function RestaurantCard({
       </div>
 
       {!readOnly && (
-        <div style={styles.cardActions}>
+        <div style={styles.cardActions} onClick={(e) => e.stopPropagation()}>
           <button
             style={{ ...styles.actionBtn, ...(status === "want" ? styles.actionBtnWant : {}) }}
             onClick={() => onToggleWant(r.name)}

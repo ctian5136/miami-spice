@@ -2,11 +2,13 @@ import React, { useMemo, useState } from "react";
 import { RESTAURANTS, FILTERS, HOODS } from "../data/restaurants";
 import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
+import DetailModal from "./DetailModal";
 
 export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove }) {
   const [filter, setFilter] = useState("all");
   const [hood, setHood] = useState("All areas");
   const [meal, setMeal] = useState("All");
+  const [detailRestaurant, setDetailRestaurant] = useState(null);
 
   const list = useMemo(() => {
     return RESTAURANTS.filter((r) => {
@@ -53,6 +55,7 @@ export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove 
             onToggleWant={onToggleWant}
             onMarkEaten={onMarkEaten}
             onRemove={onRemove}
+            onOpenDetail={setDetailRestaurant}
           />
         ))}
       </div>
@@ -65,6 +68,10 @@ export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove 
         Days, prices & menus vary by restaurant and can change — drinks, tax & tip aren't included.
         Confirm each on the official Miami Spice site before booking.
       </footer>
+
+      {detailRestaurant && (
+        <DetailModal restaurant={detailRestaurant} onClose={() => setDetailRestaurant(null)} />
+      )}
     </>
   );
 }

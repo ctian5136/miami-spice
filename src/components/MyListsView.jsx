@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { RESTAURANTS } from "../data/restaurants";
 import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
+import DetailModal from "./DetailModal";
 
 const noop = () => {};
 
@@ -13,6 +14,7 @@ export default function MyListsView({
   onRemove = noop,
   ownerLabel = "Your",
 }) {
+  const [detailRestaurant, setDetailRestaurant] = useState(null);
   const want = RESTAURANTS.filter((r) => picks[r.name]?.status === "want");
   const eaten = RESTAURANTS.filter((r) => picks[r.name]?.status === "eaten");
 
@@ -35,6 +37,7 @@ export default function MyListsView({
               onToggleWant={onToggleWant}
               onMarkEaten={onMarkEaten}
               onRemove={onRemove}
+              onOpenDetail={setDetailRestaurant}
             />
           ))}
         </div>
@@ -59,9 +62,14 @@ export default function MyListsView({
               onToggleWant={onToggleWant}
               onMarkEaten={onMarkEaten}
               onRemove={onRemove}
+              onOpenDetail={setDetailRestaurant}
             />
           ))}
         </div>
+      )}
+
+      {detailRestaurant && (
+        <DetailModal restaurant={detailRestaurant} onClose={() => setDetailRestaurant(null)} />
       )}
     </>
   );

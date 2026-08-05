@@ -18,6 +18,8 @@ export const colors = {
 export const keyframes = `
   @keyframes drift { 0%{transform:translate(0,0)} 50%{transform:translate(-2%,-3%)} 100%{transform:translate(0,0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  button:focus { outline: none; }
+  button:focus-visible { outline: 2px solid ${colors.accentDark}; outline-offset: 2px; }
   @media (max-width:640px){
     .ms-hide{display:none}
     .poster-grid{grid-template-columns:1fr !important}
@@ -253,6 +255,24 @@ export const styles = {
     color: colors.textSoft, fontSize: 13.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
   },
   errorText: { fontSize: 12.5, color: "#A9423F", margin: "8px 0 0" },
+
+  detailLinks: { display: "flex", gap: 8, flexWrap: "wrap", margin: "16px 0" },
+  detailLinkBtn: {
+    display: "inline-flex", alignItems: "center", gap: 6,
+    padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${colors.accent}`,
+    background: colors.accentSoftBg, color: colors.accentDark, fontSize: 12.5, fontWeight: 700,
+    cursor: "pointer", fontFamily: "inherit", textDecoration: "none",
+  },
+  detailSectionTitle: {
+    fontSize: 11.5, fontWeight: 700, color: colors.textSoft, textTransform: "uppercase",
+    letterSpacing: "0.06em", margin: "18px 0 8px",
+  },
+  spiceMenuList: { listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 },
+  spiceMenuItem: {
+    fontSize: 13.5, lineHeight: 1.5, color: colors.text, padding: "8px 12px",
+    background: colors.bg, borderRadius: 8, border: `1px solid ${colors.border}`,
+  },
+  detailEmptyNote: { fontSize: 12.5, color: colors.textSoft, fontStyle: "italic" },
 
   searchRow: { display: "flex", gap: 8, marginBottom: 18 },
   input: {
