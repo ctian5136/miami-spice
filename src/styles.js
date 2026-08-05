@@ -39,6 +39,8 @@ export const keyframes = `
     .filters-toggle-btn{display:flex !important}
     .filters-panel{display:none !important; margin-top:12px !important}
     .filters-panel.filters-panel-open{display:flex !important}
+    .mobile-nav{display:flex !important}
+    .page{padding-bottom:76px !important}
   }
   @media (max-width:960px) and (min-width:641px){
     .restaurant-grid{grid-template-columns:repeat(2, minmax(0, 1fr)) !important}
@@ -216,6 +218,23 @@ export const styles = {
   controls: {
     padding: "18px 24px 14px", position: "sticky", zIndex: 20,
     background: colors.bg,
+  },
+  mobileNav: {
+    display: "none", position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 30,
+    background: "#fff", borderTop: `1px solid ${colors.border}`,
+    padding: "8px 8px calc(6px + env(safe-area-inset-bottom))",
+    boxShadow: "0 -6px 16px rgba(59,46,34,0.08)",
+  },
+  mobileNavBtn: {
+    flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+    background: "none", border: "none", padding: "6px 4px", cursor: "pointer", fontFamily: "inherit",
+  },
+  mobileNavLabel: { fontSize: 10.5, fontWeight: 600, color: colors.textSoft },
+  mobileNavLabelActive: { color: colors.accent, fontWeight: 700 },
+  mobileNavBadge: {
+    position: "absolute", top: 2, right: "22%", minWidth: 15, height: 15, borderRadius: 999,
+    background: colors.terracotta, color: colors.cream, fontSize: 9.5, fontWeight: 700,
+    display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px",
   },
   filtersToggleBtn: {
     display: "none", alignItems: "center", justifyContent: "center", gap: 8,

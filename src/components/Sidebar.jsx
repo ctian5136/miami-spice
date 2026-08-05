@@ -1,24 +1,24 @@
 import React from "react";
 import { colors, styles } from "../styles";
 
-function SearchIcon({ active }) {
+export function SearchIcon({ color = colors.text }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.cream : colors.text} strokeWidth="2" strokeLinecap="round" width="15" height="15">
+    <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" width="15" height="15">
       <circle cx="11" cy="11" r="7" />
       <path d="M21 21l-4.3-4.3" />
     </svg>
   );
 }
-function ListIcon({ active }) {
+export function ListIcon({ color = colors.text }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.cream : colors.text} strokeWidth="2" strokeLinecap="round" width="15" height="15">
+    <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" width="15" height="15">
       <path d="M4 6h16M4 12h16M4 18h10" />
     </svg>
   );
 }
-function FriendsIcon({ active }) {
+export function FriendsIcon({ color = colors.text }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.cream : colors.text} strokeWidth="2" strokeLinecap="round" width="15" height="15">
+    <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" width="15" height="15">
       <circle cx="9" cy="8" r="3.2" />
       <path d="M3.5 19c1.2-3.5 3.6-5 5.5-5s4.3 1.5 5.5 5" />
       <circle cx="18" cy="9" r="2.4" />
@@ -39,7 +39,7 @@ export default function Sidebar({ tab, setTab, myLists, openListId, onOpenList, 
         style={{ ...styles.navRow, ...(tab === "browse" ? styles.navRowActive : {}) }}
         onClick={() => setTab("browse")}
       >
-        <SearchIcon active={tab === "browse"} />
+        <SearchIcon color={tab === "browse" ? colors.cream : colors.text} />
         Browse
       </button>
 
@@ -50,7 +50,7 @@ export default function Sidebar({ tab, setTab, myLists, openListId, onOpenList, 
           onOpenList(null);
         }}
       >
-        <ListIcon active={tab === "mylists"} />
+        <ListIcon color={tab === "mylists" ? colors.cream : colors.text} />
         My Lists
       </button>
       {myLists.length > 0 && (
@@ -71,7 +71,7 @@ export default function Sidebar({ tab, setTab, myLists, openListId, onOpenList, 
         style={{ ...styles.navRow, ...(tab === "friends" ? styles.navRowActive : {}) }}
         onClick={() => setTab("friends")}
       >
-        <FriendsIcon active={tab === "friends"} />
+        <FriendsIcon color={tab === "friends" ? colors.cream : colors.text} />
         Friends
         {incomingCount > 0 && <span style={styles.navCountBadge}>{incomingCount}</span>}
       </button>

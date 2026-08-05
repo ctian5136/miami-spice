@@ -6,6 +6,7 @@ import { styles, keyframes, colors, COMPACT_BAR_HEIGHT } from "./styles";
 import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests } from "./lib/social";
 import { fetchMyLists, createList, addItemToList, setListPersonal } from "./lib/lists";
 import Sidebar from "./components/Sidebar";
+import MobileNav from "./components/MobileNav";
 import BrowseView from "./components/BrowseView";
 import MyListsView from "./components/MyListsView";
 import FriendsView from "./components/FriendsView";
@@ -159,7 +160,7 @@ export default function App() {
   );
 
   return (
-    <div style={styles.page}>
+    <div style={styles.page} className="page">
       <style>{keyframes}</style>
 
       <div style={{ ...styles.compactBar, ...(compactVisible ? styles.compactBarVisible : {}) }}>
@@ -286,6 +287,8 @@ export default function App() {
           onSave={handleSaveEaten}
         />
       )}
+
+      <MobileNav tab={tab} setTab={setTab} onOpenList={setOpenListId} incomingCount={incomingCount} />
     </div>
   );
 }
