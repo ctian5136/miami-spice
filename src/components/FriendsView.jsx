@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { ArrowLeft, Check, X, UserPlus, Search } from "lucide-react";
-import { styles } from "../styles";
+import { ArrowLeft, Check, X, UserPlus, Search, Users } from "lucide-react";
+import { styles, colors } from "../styles";
 import MyListsView from "./MyListsView";
 import {
   searchUsers, sendFriendRequest, cancelFriendRequest,
@@ -31,7 +31,20 @@ function restaurantCountLabel(person) {
   return `${n} restaurant${n === 1 ? "" : "s"} tracked`;
 }
 
+function BackRow({ onBack, label = "Back" }) {
+  return (
+    <button
+      style={{ ...styles.secondaryBtn, display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 18 }}
+      onClick={onBack}
+    >
+      <ArrowLeft size={14} strokeWidth={2.5} /> {label}
+    </button>
+  );
+}
+
 export default function FriendsView({ user }) {
+  const [mode, setMode] = useState("friends"); // 'friends' | 'search' | 'requests'
+
   const [searchText, setSearchText] = useState("");
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
@@ -119,105 +132,148 @@ export default function FriendsView({ user }) {
 
   if (selectedFriend) {
     return (
-      <>
-        <div style={{ ...styles.section, paddingBottom: 0 }}>
-          <button
-            style={{ ...styles.secondaryBtn, display: "inline-flex", alignItems: "center", gap: 6 }}
-            onClick={() => setSelectedFriend(null)}
-          >
-            <ArrowLeft size={14} strokeWidth={2.5} /> Back to friends
-          </button>
-        </div>
+      <div style={styles.section}>
+        <BackRow onBack={() => setSelectedFriend(null)} label="Back to friends" />
         {selectedPicks === null ? (
           <div style={styles.empty}>Loading…</div>
         ) : (
           <MyListsView picks={selectedPicks} readOnly ownerLabel={`${selectedFriend.displayName || "Their"}'s`} />
         )}
-      </>
+      </div>
     );
   }
 
+  if (mode === "search") {
+    return (
+      <div style={styles.section}>
+        <BackRow onBack={() => setMode("friends")} />
+        <h2 style={styles.sectionTitle}>Add a friend</h2>
+        <p style={styles.sectionSub}>Search by name or email. They'll need to accept before you see each other's lists.</p>
+
+        <form onSubmit={handleSearch} style={styles.searchRow}>
+          <input
+            style={styles.input}
+            placeholder="Name or email"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            autoFocus
+          />
+          <button type="submit" style={styles.primaryBtn} disabled={searching}>
+            <Search size={14} strokeWidth={2.5} />
+          </button>
+        </form>
+        {searchMsg && <p style={styles.errorText}>{searchMsg}</p>}
+
+        {results.map((person) => {
+          const isFriend = friendUids.has(person.uid);
+          const isOutgoing = outgoingUids.has(person.uid);
+          const isIncoming = incomingUids.has(person.uid);
+          return (
+            <PersonRow key={person.uid} person={person} subtitle={restaurantCountLabel(person)}>
+              {isFriend && <span style={{ ...styles.badge, ...styles.badgeEaten }}>Friends</span>}
+              {!isFriend && isOutgoing && <span style={{ ...styles.badge, ...styles.badgeWant }}>Requested</span>}
+              {!isFriend && isIncoming && <span style={{ ...styles.badge, ...styles.badgeWant }}>Sent you a request</span>}
+              {!isFriend && !isOutgoing && !isIncoming && (
+                <button style={styles.secondaryBtn} onClick={() => handleSend(person.uid)}>
+                  <UserPlus size={14} strokeWidth={2.5} /> Add
+                </button>
+              )}
+            </PersonRow>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (mode === "requests") {
+    return (
+      <div style={styles.section}>
+        <BackRow onBack={() => setMode("friends")} />
+        <h2 style={styles.sectionTitle}>Friend requests</h2>
+
+        {incoming.length === 0 && outgoing.length === 0 ? (
+          <div style={styles.empty}>No pending requests.</div>
+        ) : (
+          <>
+            {incoming.length > 0 && (
+              <>
+                <h3 style={{ ...styles.sectionTitle, fontSize: 16 }}>Incoming</h3>
+                {incoming.map((req) => (
+                  <PersonRow key={req.id} person={req.profile} subtitle={restaurantCountLabel(req.profile)}>
+                    <button style={{ ...styles.actionBtn, ...styles.actionBtnEaten }} onClick={() => handleAccept(req)}>
+                      <Check size={14} strokeWidth={2.5} /> Accept
+                    </button>
+                    <button style={styles.removeBtn} onClick={() => handleDecline(req)}>
+                      <X size={14} strokeWidth={2.5} />
+                    </button>
+                  </PersonRow>
+                ))}
+              </>
+            )}
+
+            {outgoing.length > 0 && (
+              <>
+                <h3 style={{ ...styles.sectionTitle, fontSize: 16, marginTop: 24 }}>Sent</h3>
+                {outgoing.map((req) => (
+                  <PersonRow key={req.id} person={req.profile} subtitle="Waiting for them to accept">
+                    <button style={styles.removeBtn} onClick={() => handleCancel(req)}>Cancel</button>
+                  </PersonRow>
+                ))}
+              </>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  const pendingCount = incoming.length;
+
   return (
     <div style={styles.section}>
-      <h2 style={styles.sectionTitle}>Add a friend</h2>
-      <p style={styles.sectionSub}>Search by name or email. They'll need to accept before you see each other's lists.</p>
-
-      <form onSubmit={handleSearch} style={styles.searchRow}>
-        <input
-          style={styles.input}
-          placeholder="Name or email"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
-        <button type="submit" style={styles.primaryBtn} disabled={searching}>
-          <Search size={14} strokeWidth={2.5} />
-        </button>
-      </form>
-      {searchMsg && <p style={styles.errorText}>{searchMsg}</p>}
-
-      {results.map((person) => {
-        const isFriend = friendUids.has(person.uid);
-        const isOutgoing = outgoingUids.has(person.uid);
-        const isIncoming = incomingUids.has(person.uid);
-        return (
-          <PersonRow key={person.uid} person={person} subtitle={restaurantCountLabel(person)}>
-            {isFriend && <span style={{ ...styles.badge, ...styles.badgeEaten }}>Friends</span>}
-            {!isFriend && isOutgoing && <span style={{ ...styles.badge, ...styles.badgeWant }}>Requested</span>}
-            {!isFriend && isIncoming && <span style={{ ...styles.badge, ...styles.badgeWant }}>Sent you a request</span>}
-            {!isFriend && !isOutgoing && !isIncoming && (
-              <button style={styles.secondaryBtn} onClick={() => handleSend(person.uid)}>
-                <UserPlus size={14} strokeWidth={2.5} /> Add
-              </button>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 4 }}>
+        <h2 style={styles.sectionTitle}>Friends</h2>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button style={{ ...styles.secondaryBtn, position: "relative" }} onClick={() => setMode("requests")}>
+            Requests
+            {pendingCount > 0 && (
+              <span
+                style={{
+                  position: "absolute", top: -6, right: -6, minWidth: 18, height: 18, borderRadius: 999,
+                  background: colors.accent, color: "#fff", fontSize: 10.5, fontWeight: 700,
+                  display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px",
+                }}
+              >
+                {pendingCount}
+              </span>
             )}
-          </PersonRow>
-        );
-      })}
+          </button>
+          <button style={styles.primaryBtn} onClick={() => setMode("search")}>
+            <UserPlus size={14} strokeWidth={2.5} /> Add friend
+          </button>
+        </div>
+      </div>
+      <p style={styles.sectionSub}>See what your friends want to eat and have eaten.</p>
 
       {loading ? (
         <div style={styles.empty}>Loading…</div>
+      ) : friends.length === 0 ? (
+        <div style={styles.empty}>
+          <Users size={22} style={{ marginBottom: 8, opacity: 0.5 }} />
+          <div>No friends yet.</div>
+          <button style={{ ...styles.secondaryBtn, marginTop: 12 }} onClick={() => setMode("search")}>
+            <UserPlus size={14} strokeWidth={2.5} /> Add your first friend
+          </button>
+        </div>
       ) : (
-        <>
-          {incoming.length > 0 && (
-            <>
-              <h3 style={{ ...styles.sectionTitle, fontSize: 18, marginTop: 28 }}>Friend requests</h3>
-              {incoming.map((req) => (
-                <PersonRow key={req.id} person={req.profile} subtitle={restaurantCountLabel(req.profile)}>
-                  <button style={{ ...styles.actionBtn, ...styles.actionBtnEaten }} onClick={() => handleAccept(req)}>
-                    <Check size={14} strokeWidth={2.5} /> Accept
-                  </button>
-                  <button style={styles.removeBtn} onClick={() => handleDecline(req)}>
-                    <X size={14} strokeWidth={2.5} />
-                  </button>
-                </PersonRow>
-              ))}
-            </>
-          )}
-
-          {outgoing.length > 0 && (
-            <>
-              <h3 style={{ ...styles.sectionTitle, fontSize: 18, marginTop: 28 }}>Pending (sent)</h3>
-              {outgoing.map((req) => (
-                <PersonRow key={req.id} person={req.profile} subtitle="Waiting for them to accept">
-                  <button style={styles.removeBtn} onClick={() => handleCancel(req)}>Cancel</button>
-                </PersonRow>
-              ))}
-            </>
-          )}
-
-          <h3 style={{ ...styles.sectionTitle, fontSize: 18, marginTop: 28 }}>Your friends</h3>
-          {friends.length === 0 ? (
-            <div style={styles.empty}>No friends yet — search above to add one.</div>
-          ) : (
-            friends.map((friend) => (
-              <PersonRow key={friend.uid} person={friend} subtitle={restaurantCountLabel(friend)}>
-                <button style={styles.secondaryBtn} onClick={() => openFriend(friend)}>View lists</button>
-                <button style={styles.removeBtn} onClick={() => handleRemove(friend.uid)}>
-                  <X size={14} strokeWidth={2.5} />
-                </button>
-              </PersonRow>
-            ))
-          )}
-        </>
+        friends.map((friend) => (
+          <PersonRow key={friend.uid} person={friend} subtitle={restaurantCountLabel(friend)}>
+            <button style={styles.secondaryBtn} onClick={() => openFriend(friend)}>View lists</button>
+            <button style={styles.removeBtn} onClick={() => handleRemove(friend.uid)}>
+              <X size={14} strokeWidth={2.5} />
+            </button>
+          </PersonRow>
+        ))
       )}
     </div>
   );
