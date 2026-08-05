@@ -4,21 +4,27 @@ import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
 import DetailModal from "./DetailModal";
 
-export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove }) {
+const CUISINES = ["All cuisines", ...new Set(RESTAURANTS.map((r) => r.cuisine))].sort(
+  (a, b) => (a === "All cuisines" ? -1 : b === "All cuisines" ? 1 : a.localeCompare(b))
+);
+
+export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove, user }) {
   const [filter, setFilter] = useState("all");
   const [hood, setHood] = useState("All areas");
   const [meal, setMeal] = useState("All");
+  const [cuisine, setCuisine] = useState("All cuisines");
   const [detailRestaurant, setDetailRestaurant] = useState(null);
 
   const list = useMemo(() => {
     return RESTAURANTS.filter((r) => {
       if (filter !== "all" && !r.tags.includes(filter)) return false;
       if (hood !== "All areas" && r.hood !== hood) return false;
+      if (cuisine !== "All cuisines" && r.cuisine !== cuisine) return false;
       if (meal === "Lunch" && r.meal === "Dinner") return false;
       if (meal === "Dinner" && r.meal === "Lunch") return false;
       return true;
     }).sort((a, b) => b.stars - a.stars);
-  }, [filter, hood, meal]);
+  }, [filter, hood, meal, cuisine]);
 
   return (
     <>
@@ -42,6 +48,9 @@ export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove 
           </select>
           <select value={meal} onChange={(e) => setMeal(e.target.value)} style={styles.select}>
             {["All", "Lunch", "Dinner"].map((m) => <option key={m}>{m}</option>)}
+          </select>
+          <select value={cuisine} onChange={(e) => setCuisine(e.target.value)} style={styles.select}>
+            {CUISINES.map((c) => <option key={c}>{c}</option>)}
           </select>
         </div>
       </div>
@@ -70,7 +79,7 @@ export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove 
       </footer>
 
       {detailRestaurant && (
-        <DetailModal restaurant={detailRestaurant} onClose={() => setDetailRestaurant(null)} />
+        <DetailModal restaurant={detailRestaurant} user={user} onClose={() => setDetailRestaurant(null)} />
       )}
     </>
   );

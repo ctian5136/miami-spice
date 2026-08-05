@@ -137,7 +137,7 @@ export default function FriendsView({ user }) {
         {selectedPicks === null ? (
           <div style={styles.empty}>Loading…</div>
         ) : (
-          <MyListsView picks={selectedPicks} readOnly ownerLabel={`${selectedFriend.displayName || "Their"}'s`} />
+          <MyListsView picks={selectedPicks} readOnly ownerLabel={`${selectedFriend.displayName || "Their"}'s`} user={user} />
         )}
       </div>
     );

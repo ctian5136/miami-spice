@@ -69,7 +69,7 @@ export default function RestaurantCard({
             onClick={() => onToggleWant(r.name)}
           >
             <Heart size={13} strokeWidth={2.5} />
-            {status === "want" ? "Wanting" : "Want to eat"}
+            {status === "want" ? "Craving" : "Want to eat"}
           </button>
           <button
             style={{ ...styles.actionBtn, ...(status === "eaten" ? styles.actionBtnEaten : {}) }}
@@ -78,11 +78,14 @@ export default function RestaurantCard({
             <UtensilsCrossed size={13} strokeWidth={2.5} />
             {status === "eaten" ? "Edit" : "Mark eaten"}
           </button>
-          {status && (
-            <button style={styles.removeBtn} onClick={() => onRemove(r.name)} title="Remove from lists">
-              <X size={14} strokeWidth={2.5} />
-            </button>
-          )}
+          <button
+            style={{ ...styles.removeBtn, ...(status ? {} : styles.removeBtnHidden) }}
+            onClick={() => onRemove(r.name)}
+            title="Remove from lists"
+            tabIndex={status ? 0 : -1}
+          >
+            <X size={14} strokeWidth={2.5} />
+          </button>
         </div>
       )}
     </div>

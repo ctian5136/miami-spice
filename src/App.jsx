@@ -163,6 +163,7 @@ export default function App() {
           onToggleWant={handleToggleWant}
           onMarkEaten={handleMarkEaten}
           onRemove={handleRemove}
+          user={user}
         />
       )}
 
@@ -172,6 +173,7 @@ export default function App() {
           onToggleWant={handleToggleWant}
           onMarkEaten={handleMarkEaten}
           onRemove={handleRemove}
+          user={user}
         />
       )}
 

@@ -18,8 +18,9 @@ export const colors = {
 export const keyframes = `
   @keyframes drift { 0%{transform:translate(0,0)} 50%{transform:translate(-2%,-3%)} 100%{transform:translate(0,0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  button:focus { outline: none; }
-  button:focus-visible { outline: 2px solid ${colors.accentDark}; outline-offset: 2px; }
+  button { -webkit-appearance: none; appearance: none; }
+  button, button:active, button:focus, a, a:focus { outline: none !important; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, a:focus-visible { outline: 2px solid ${colors.accentDark} !important; outline-offset: 2px; }
   @media (max-width:640px){
     .ms-hide{display:none}
     .poster-grid{grid-template-columns:1fr !important}
@@ -146,7 +147,7 @@ export const styles = {
   tabButtonActive: { background: colors.accent, color: colors.cream, borderColor: colors.accent },
 
   controls: { maxWidth: 1080, margin: "0 auto", padding: "22px 20px 0" },
-  chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 },
+  chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 },
   chip: {
     display: "inline-flex", alignItems: "center", gap: 6,
     padding: "8px 14px", borderRadius: 999, border: `1.5px solid ${colors.border}`,
@@ -154,7 +155,7 @@ export const styles = {
     cursor: "pointer", transition: "all 0.15s",
   },
   chipActive: { background: colors.accent, borderColor: colors.accent, color: "#fff" },
-  selects: { display: "flex", gap: 10, flexWrap: "wrap" },
+  selects: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 4 },
   select: {
     padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
     background: "#fff", color: colors.text, fontSize: 13.5, fontWeight: 600,
@@ -163,7 +164,7 @@ export const styles = {
 
   grid: {
     maxWidth: 1080, margin: "22px auto 0", padding: "0 20px",
-    display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16,
+    display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16,
   },
   card: {
     textAlign: "left", border: `1.5px solid ${colors.border}`,
@@ -203,6 +204,7 @@ export const styles = {
     background: "#fff", color: "#9A7358", fontSize: 12.5, fontWeight: 700, cursor: "pointer",
     fontFamily: "inherit",
   },
+  removeBtnHidden: { visibility: "hidden", pointerEvents: "none" },
 
   badge: {
     display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700,
@@ -234,6 +236,19 @@ export const styles = {
     background: "#fff", borderRadius: 20, padding: 28, maxWidth: 460, width: "100%",
     maxHeight: "88vh", overflowY: "auto", boxShadow: "0 24px 60px rgba(43,35,28,0.3)",
   },
+  dialogBoxWide: {
+    background: "#fff", borderRadius: 20, padding: 28, maxWidth: 820, width: "100%",
+    maxHeight: "88vh", overflowY: "auto", boxShadow: "0 24px 60px rgba(43,35,28,0.3)",
+  },
+  detailGrid: { display: "flex", gap: 28, flexWrap: "wrap" },
+  detailMain: { flex: "1 1 320px", minWidth: 260 },
+  detailFriendsCol: {
+    flex: "1 1 220px", minWidth: 220,
+    borderLeft: `1px solid ${colors.border}`, paddingLeft: 24,
+  },
+  friendReviewRow: { display: "flex", gap: 10, marginBottom: 16 },
+  friendReviewAvatar: { width: 32, height: 32, borderRadius: 999, objectFit: "cover", flexShrink: 0, background: colors.accentSoftBg },
+  friendReviewName: { fontSize: 13, fontWeight: 700, color: colors.text, margin: "0 0 4px" },
   dialogTitle: { fontFamily: "'Georgia', serif", fontSize: 21, fontWeight: 700, margin: "0 0 4px", color: colors.text },
   dialogSub: { fontSize: 13, color: colors.textSoft, margin: "0 0 18px" },
   label: { fontSize: 12.5, fontWeight: 700, color: colors.textSoft, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6, display: "block" },

@@ -13,6 +13,7 @@ export default function MyListsView({
   onMarkEaten = noop,
   onRemove = noop,
   ownerLabel = "Your",
+  user,
 }) {
   const [detailRestaurant, setDetailRestaurant] = useState(null);
   const want = RESTAURANTS.filter((r) => picks[r.name]?.status === "want");
@@ -69,7 +70,7 @@ export default function MyListsView({
       )}
 
       {detailRestaurant && (
-        <DetailModal restaurant={detailRestaurant} onClose={() => setDetailRestaurant(null)} />
+        <DetailModal restaurant={detailRestaurant} user={user} onClose={() => setDetailRestaurant(null)} />
       )}
     </>
   );
