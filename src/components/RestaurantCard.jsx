@@ -39,11 +39,15 @@ export default function RestaurantCard({
             <span>{r.cuisine}</span>
           </div>
         </div>
-        {status && (
-          <span style={{ ...styles.badge, ...(status === "want" ? styles.badgeWant : styles.badgeEaten) }}>
-            {status === "want" ? "Want to eat" : "Eaten"}
-          </span>
-        )}
+        <span
+          style={{
+            ...styles.badge,
+            ...(status === "want" ? styles.badgeWant : status === "eaten" ? styles.badgeEaten : styles.badgeWant),
+            ...(status ? {} : styles.badgeHidden),
+          }}
+        >
+          {status === "eaten" ? "Eaten" : "Want to eat"}
+        </span>
       </div>
 
       <p style={styles.cardNote}>{r.note}</p>

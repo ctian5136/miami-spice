@@ -19,8 +19,9 @@ export const keyframes = `
   @keyframes drift { 0%{transform:translate(0,0)} 50%{transform:translate(-2%,-3%)} 100%{transform:translate(0,0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
   button { -webkit-appearance: none; appearance: none; }
-  button, button:active, button:focus, a, a:focus { outline: none !important; -webkit-tap-highlight-color: transparent; }
-  button:focus-visible, a:focus-visible { outline: 2px solid ${colors.accentDark} !important; outline-offset: 2px; }
+  button, button:active, button:focus, button:focus-visible, a, a:focus, a:focus-visible {
+    outline: none !important; -webkit-tap-highlight-color: transparent;
+  }
   @media (max-width:640px){
     .ms-hide{display:none}
     .poster-grid{grid-template-columns:1fr !important}
@@ -212,6 +213,7 @@ export const styles = {
   },
   badgeWant: { background: colors.accentSoftBg, color: colors.accentDark },
   badgeEaten: { background: colors.eatenSoftBg, color: colors.eatenDark },
+  badgeHidden: { visibility: "hidden" },
 
   eatenNotes: { fontSize: 13, lineHeight: 1.5, color: "#4A4033", background: "#fff", borderRadius: 10, padding: "10px 12px", margin: 0 },
   photoStrip: { display: "flex", gap: 6, flexWrap: "wrap" },
