@@ -1,15 +1,13 @@
-// Warm neutral / cream palette (no bright red-orange).
+// Cream / rust / terracotta palette.
 export const colors = {
   bg: "#FBF6EE",
   text: "#2B231C",
   textSoft: "#6B5B4A",
-  heroDark: "#3B2E22",
-  heroMid: "#7A5C42",
-  heroLight: "#C9AD82",
-  gold: "#D9B26B",
-  accent: "#A9683F",
-  accentDark: "#7A4B2A",
-  accentSoftBg: "#F3E4D0",
+  cream: "#FCEACB",
+  accent: "#C05A12",
+  accentDark: "#8B4426",
+  accentSoftBg: "#F6E4CE",
+  terracotta: "#CB5B41",
   eaten: "#6E7B4F",
   eatenDark: "#4F5A37",
   eatenSoftBg: "#EEF0E4",
@@ -20,7 +18,12 @@ export const colors = {
 export const keyframes = `
   @keyframes drift { 0%{transform:translate(0,0)} 50%{transform:translate(-2%,-3%)} 100%{transform:translate(0,0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  @media (max-width:640px){ .ms-hide{display:none} }
+  @media (max-width:640px){
+    .ms-hide{display:none}
+    .poster-grid{grid-template-columns:1fr !important}
+    .poster-rail{display:none !important}
+    .poster-main{min-height:180px !important; padding-top:40px !important}
+  }
 `;
 
 export const styles = {
@@ -42,10 +45,8 @@ export const styles = {
   },
   loadingText: { fontSize: 15, fontWeight: 600 },
   signInScreen: {
-    position: "relative",
-    overflow: "hidden",
     fontFamily: "'Inter', system-ui, sans-serif",
-    background: `linear-gradient(135deg, ${colors.heroDark} 0%, ${colors.heroMid} 45%, ${colors.heroLight} 100%)`,
+    background: colors.accent,
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
@@ -53,80 +54,93 @@ export const styles = {
     padding: 24,
   },
   signInCard: {
-    position: "relative",
-    maxWidth: 440,
+    maxWidth: 420,
     width: "100%",
     textAlign: "center",
-    color: "#FBF6EE",
-    padding: "48px 32px",
+    color: colors.cream,
   },
-  signInTitle: {
-    fontFamily: "'Georgia', serif", fontSize: 44, lineHeight: 1,
-    margin: "0 0 18px", fontWeight: 700, letterSpacing: "-0.02em",
+  signInKicker: {
+    fontSize: 13, fontWeight: 700, letterSpacing: "0.4em", textTransform: "uppercase",
+    color: colors.cream, opacity: 0.85, marginBottom: 6,
+  },
+  signInWord: {
+    fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900,
+    fontSize: 96, letterSpacing: "-0.04em", lineHeight: 0.85, margin: "0 0 18px",
   },
   signInSub: { fontSize: 15, lineHeight: 1.6, opacity: 0.92, margin: "0 0 28px" },
   signInButton: {
     display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10,
     padding: "13px 28px", borderRadius: 999, border: "none",
-    background: "#fff", color: colors.accentDark, fontSize: 14.5, fontWeight: 700,
+    background: colors.cream, color: colors.accentDark, fontSize: 14.5, fontWeight: 700,
     cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 20px rgba(0,0,0,0.18)",
   },
-  hero: {
-    position: "relative",
-    overflow: "hidden",
-    background: `linear-gradient(135deg, ${colors.heroDark} 0%, ${colors.heroMid} 45%, ${colors.heroLight} 100%)`,
-    padding: "56px 28px 48px",
-    color: "#FBF6EE",
-  },
-  heat: {
-    position: "absolute", inset: "-40%",
-    background: "radial-gradient(circle at 70% 30%, rgba(217,178,107,0.4), transparent 45%), radial-gradient(circle at 20% 80%, rgba(122,92,66,0.35), transparent 50%)",
-    animation: "drift 14s ease-in-out infinite",
-  },
-  heroInner: { position: "relative", maxWidth: 1080, margin: "0 auto" },
-  headerUserRow: {
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    flexWrap: "wrap", gap: 12, marginBottom: 16,
-  },
-  userRow: { display: "flex", alignItems: "center", gap: 10 },
-  avatar: { width: 26, height: 26, borderRadius: 999, border: "1.5px solid rgba(255,255,255,0.4)", objectFit: "cover" },
-  userName: { fontSize: 13, fontWeight: 600, opacity: 0.92 },
-  signOutButton: {
-    display: "inline-flex", alignItems: "center", gap: 5,
-    padding: "6px 12px", borderRadius: 999, border: "1.5px solid rgba(255,255,255,0.35)",
-    background: "rgba(0,0,0,0.18)", color: "#FBF6EE", fontSize: 12, fontWeight: 600,
-    cursor: "pointer", fontFamily: "inherit",
-  },
-  eyebrow: {
-    fontSize: 12, letterSpacing: "0.22em", textTransform: "uppercase",
-    fontWeight: 700, color: colors.gold, marginBottom: 16,
-  },
-  title: {
-    fontFamily: "'Georgia', serif", fontSize: 52, lineHeight: 0.98,
-    margin: 0, fontWeight: 700, letterSpacing: "-0.02em",
-  },
-  titleAccent: { color: colors.gold, fontStyle: "italic" },
-  sub: { fontSize: 15.5, lineHeight: 1.55, maxWidth: 520, marginTop: 18, opacity: 0.92 },
-  tracker: {
-    marginTop: 26, display: "flex", flexWrap: "wrap", gap: 10,
-  },
-  trackerPill: {
-    display: "inline-flex", alignItems: "baseline", gap: 8,
-    background: "rgba(0,0,0,0.22)", padding: "10px 18px", borderRadius: 999,
-  },
-  trackerNum: { fontSize: 24, fontWeight: 800, fontFamily: "'Georgia', serif", color: colors.gold },
-  trackerLabel: { fontSize: 13, textTransform: "uppercase", letterSpacing: "0.12em", opacity: 0.85 },
 
-  tabs: {
-    maxWidth: 1080, margin: "0 auto", padding: "0 20px", display: "flex", gap: 6,
-    marginTop: -22, position: "relative", zIndex: 1,
+  posterGrid: {
+    display: "grid", gridTemplateColumns: "1fr 3px 260px", minHeight: 300,
+    maxWidth: 1080, margin: "0 auto",
   },
+  posterMain: {
+    background: colors.accent, position: "relative", overflow: "hidden",
+    display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 0 0 34px",
+  },
+  posterKicker: {
+    position: "absolute", top: 22, left: 34,
+    fontSize: 12, fontWeight: 700, letterSpacing: "0.4em", textTransform: "uppercase",
+    color: colors.cream, opacity: 0.85,
+  },
+  posterWord: {
+    fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900,
+    fontSize: "clamp(70px, 12vw, 170px)", letterSpacing: "-0.04em", lineHeight: 0.75,
+    color: colors.cream, margin: 0, whiteSpace: "nowrap",
+  },
+  posterSubcap: {
+    fontSize: 13, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase",
+    color: "rgba(252,234,203,0.78)", marginTop: 10,
+  },
+  posterRail: { background: colors.terracotta },
+  posterMeta: {
+    background: colors.cream, padding: "54px 22px 24px",
+    display: "flex", flexDirection: "column", position: "relative",
+  },
+  posterProfile: {
+    position: "absolute", top: 14, right: 14, zIndex: 4,
+    width: 34, height: 34, borderRadius: 999, padding: 0, overflow: "hidden",
+    background: colors.accentSoftBg, border: `1.5px solid ${colors.accent}`,
+    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+  },
+  posterProfileImg: { width: "100%", height: "100%", objectFit: "cover" },
+  posterOverlay: { position: "fixed", inset: 0, zIndex: 9, background: "transparent" },
+  posterProfileMenu: {
+    position: "absolute", top: 56, right: 14, zIndex: 10, width: 208,
+    background: "#fff", border: `1px solid ${colors.border}`, borderRadius: 10,
+    boxShadow: "0 10px 28px rgba(43,24,10,0.18)", overflow: "hidden",
+  },
+  profileWho: {
+    padding: "11px 14px 9px", fontSize: 11.5, color: colors.textSoft,
+    borderBottom: `1px solid ${colors.border}`,
+  },
+  profileWhoName: { display: "block", fontSize: 13, color: colors.text, fontWeight: 700, marginTop: 1 },
+  profileMenuBtn: {
+    display: "block", width: "100%", textAlign: "left", padding: "10px 14px", fontSize: 12.5,
+    background: "none", border: "none", color: colors.accentDark, fontFamily: "inherit", cursor: "pointer",
+  },
+  posterRule: { height: 1, background: colors.accent, opacity: 0.3, margin: "0 0 18px" },
+  posterStats: { display: "flex", flexDirection: "column", gap: 16, marginBottom: 20 },
+  statNum: {
+    fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 40,
+    lineHeight: 0.85, color: colors.accent,
+  },
+  statLabel: {
+    marginTop: 3, fontSize: 11, letterSpacing: "0.03em", textTransform: "uppercase", color: colors.accentDark,
+  },
+
+  tabs: { display: "flex", gap: 6, flexWrap: "wrap", marginTop: "auto" },
   tabButton: {
-    padding: "10px 18px", borderRadius: "12px 12px 0 0", border: "none",
-    background: "rgba(255,255,255,0.55)", color: colors.textSoft, fontSize: 13.5, fontWeight: 700,
-    cursor: "pointer", fontFamily: "inherit",
+    fontSize: 10.5, textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700,
+    border: `1px solid ${colors.accent}`, padding: "6px 10px", color: colors.accentDark,
+    borderRadius: 4, background: "none", cursor: "pointer", fontFamily: "inherit",
   },
-  tabButtonActive: { background: colors.cardBg, color: colors.text },
+  tabButtonActive: { background: colors.accent, color: colors.cream, borderColor: colors.accent },
 
   controls: { maxWidth: 1080, margin: "0 auto", padding: "22px 20px 0" },
   chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 },

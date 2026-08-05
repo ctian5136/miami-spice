@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
-import { styles, keyframes } from "./styles";
+import { styles, keyframes, colors } from "./styles";
 import { upsertProfile, getPicks, setWant, saveEaten, removePick } from "./lib/social";
 import BrowseView from "./components/BrowseView";
 import MyListsView from "./components/MyListsView";
@@ -21,6 +21,7 @@ export default function App() {
   const [picks, setPicks] = useState({});
   const [tab, setTab] = useState("browse");
   const [eatenDialogFor, setEatenDialogFor] = useState(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
@@ -74,13 +75,9 @@ export default function App() {
   if (!user) {
     return (
       <div style={styles.signInScreen}>
-        <style>{keyframes}</style>
-        <div style={styles.heat} />
         <div style={styles.signInCard}>
-          <div style={styles.eyebrow}>Aug 1 — Sep 30, 2026 · 25th Anniversary</div>
-          <h1 style={styles.signInTitle}>
-            Miami Spice<br /><span style={styles.titleAccent}>2026</span>
-          </h1>
+          <div style={styles.signInKicker}>Miami</div>
+          <h1 style={styles.signInWord}>SPICE</h1>
           <p style={styles.signInSub}>
             Sign in to build your list of picks — it'll be saved to your account and follow you
             across devices.
@@ -97,54 +94,68 @@ export default function App() {
     <div style={styles.page}>
       <style>{keyframes}</style>
 
-      <header style={styles.hero}>
-        <div style={styles.heat} />
-        <div style={styles.heroInner}>
-          <div style={styles.headerUserRow}>
-            <div style={styles.eyebrow}>Aug 1 — Sep 30, 2026 · 25th Anniversary</div>
-            <div style={styles.userRow}>
-              {user.photoURL && (
-                <img src={user.photoURL} alt={user.displayName || "User"} style={styles.avatar} />
-              )}
-              <span style={styles.userName}>{user.displayName}</span>
-              <button onClick={logout} style={styles.signOutButton}>
-                <LogOut size={13} strokeWidth={2.5} />
-                Sign out
+      <header style={styles.posterGrid} className="poster-grid">
+        <div style={styles.posterMain} className="poster-main">
+          <div style={styles.posterKicker}>Miami</div>
+          <h1 style={styles.posterWord}>SPICE</h1>
+          <div style={styles.posterSubcap}>25th Anniversary · Aug 1 – Sep 30, 2026</div>
+        </div>
+        <div style={styles.posterRail} className="poster-rail" />
+        <div style={styles.posterMeta}>
+          <button style={styles.posterProfile} onClick={() => setProfileOpen((o) => !o)}>
+            {user.photoURL ? (
+              <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
+            ) : (
+              <User size={16} color={colors.accent} strokeWidth={2.5} />
+            )}
+          </button>
+          {profileOpen && (
+            <>
+              <div style={styles.posterOverlay} onClick={() => setProfileOpen(false)} />
+              <div style={styles.posterProfileMenu}>
+                <div style={styles.profileWho}>
+                  Signed in as
+                  <span style={styles.profileWhoName}>{user.displayName}</span>
+                </div>
+                <button
+                  style={styles.profileMenuBtn}
+                  onClick={() => {
+                    setProfileOpen(false);
+                    logout();
+                  }}
+                >
+                  <LogOut size={13} strokeWidth={2.5} style={{ marginRight: 6, verticalAlign: -2 }} />
+                  Sign out
+                </button>
+              </div>
+            </>
+          )}
+
+          <div style={styles.posterRule} />
+          <div style={styles.posterStats}>
+            <div>
+              <div style={styles.statNum}>{wantCount}</div>
+              <div style={styles.statLabel}>Want to eat</div>
+            </div>
+            <div>
+              <div style={styles.statNum}>{eatenCount}</div>
+              <div style={styles.statLabel}>Eaten</div>
+            </div>
+          </div>
+
+          <nav style={styles.tabs}>
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                style={{ ...styles.tabButton, ...(tab === t.id ? styles.tabButtonActive : {}) }}
+              >
+                {t.label}
               </button>
-            </div>
-          </div>
-          <h1 style={styles.title}>
-            Miami Spice<br /><span style={styles.titleAccent}>2026</span>
-          </h1>
-          <p style={styles.sub}>
-            The standouts from 300+ menus — starred rooms, group scenes, date nights,
-            and the deals worth clearing a night for. Track what you want to try, log what you've
-            eaten, and see what your friends are picking.
-          </p>
-          <div style={styles.tracker}>
-            <div style={styles.trackerPill}>
-              <span style={styles.trackerNum}>{wantCount}</span>
-              <span style={styles.trackerLabel}>want to eat</span>
-            </div>
-            <div style={styles.trackerPill}>
-              <span style={styles.trackerNum}>{eatenCount}</span>
-              <span style={styles.trackerLabel}>eaten</span>
-            </div>
-          </div>
+            ))}
+          </nav>
         </div>
       </header>
-
-      <nav style={styles.tabs}>
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            style={{ ...styles.tabButton, ...(tab === t.id ? styles.tabButtonActive : {}) }}
-          >
-            {t.label}
-          </button>
-        ))}
-      </nav>
 
       {tab === "browse" && (
         <BrowseView
