@@ -76,7 +76,7 @@ export const styles = {
   },
 
   posterGrid: {
-    display: "grid", gridTemplateColumns: "1fr 3px 260px", minHeight: 340,
+    display: "grid", gridTemplateColumns: "1fr 3px 330px", minHeight: 340,
     width: "100%",
   },
   posterMain: {
@@ -96,7 +96,7 @@ export const styles = {
   },
   posterSubcap: {
     fontSize: 13, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase",
-    color: "rgba(252,234,203,0.78)", marginTop: 10,
+    color: "rgba(252,234,203,0.78)", marginTop: 24,
   },
   posterRail: { background: colors.terracotta },
   posterMeta: {
