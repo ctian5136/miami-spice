@@ -15,6 +15,11 @@ export const colors = {
   cardBg: "#FFFFFF",
 };
 
+// Fixed so the compact bar's rendered height always matches the sticky
+// offset given to the sidebar/filters below it — no gap for scrolled
+// content to peek through.
+export const COMPACT_BAR_HEIGHT = 72;
+
 export const keyframes = `
   @keyframes drift { 0%{transform:translate(0,0)} 50%{transform:translate(-2%,-3%)} 100%{transform:translate(0,0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
@@ -151,10 +156,10 @@ export const styles = {
     width: 248, flexShrink: 0,
   },
   sidebarSticky: {
-    position: "sticky", transition: "top 0.2s ease",
+    position: "sticky",
     margin: "24px 12px 24px 24px", padding: "14px 12px", boxSizing: "border-box",
     background: colors.cardBg, borderRadius: 20,
-    border: `1px solid ${colors.border}`, boxShadow: "0 10px 30px rgba(59,46,34,0.10)",
+    boxShadow: "0 10px 30px rgba(59,46,34,0.10)",
   },
   navRow: {
     display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14,
@@ -176,10 +181,10 @@ export const styles = {
   navDivider: { height: 1, background: colors.border, margin: "12px 4px" },
 
   compactBar: {
-    position: "fixed", top: 0, left: 0, right: 0, zIndex: 30,
-    background: colors.accent, padding: "20px 28px", display: "flex", alignItems: "center", justifyContent: "space-between",
-    transform: "translateY(-100%)", opacity: 0, transition: "transform 0.25s ease, opacity 0.25s ease",
-    pointerEvents: "none",
+    position: "fixed", top: 0, left: 0, right: 0, zIndex: 30, height: COMPACT_BAR_HEIGHT,
+    background: colors.accent, padding: "0 28px", display: "flex", alignItems: "center", justifyContent: "space-between",
+    transform: "translateY(-100%)", opacity: 0, transition: "transform 0.12s ease-out, opacity 0.12s ease-out",
+    pointerEvents: "none", boxSizing: "border-box",
   },
   compactBarVisible: { transform: "translateY(0)", opacity: 1, pointerEvents: "auto" },
   compactWord: { fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 20, color: colors.cream, letterSpacing: "-0.01em" },

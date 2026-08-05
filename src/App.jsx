@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { LogOut, User } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
-import { styles, keyframes, colors } from "./styles";
+import { styles, keyframes, colors, COMPACT_BAR_HEIGHT } from "./styles";
 import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests } from "./lib/social";
 import { fetchMyLists, createList, addItemToList } from "./lib/lists";
 import Sidebar from "./components/Sidebar";
@@ -212,7 +212,7 @@ export default function App() {
       <div style={styles.appShell}>
         <div style={styles.appBody}>
           <div style={styles.sidebarColumn}>
-            <div style={{ ...styles.sidebarSticky, top: compactVisible ? 84 : 16 }}>
+            <div style={{ ...styles.sidebarSticky, top: compactVisible ? COMPACT_BAR_HEIGHT : 16 }}>
               <Sidebar
                 tab={tab}
                 setTab={setTab}
@@ -233,7 +233,7 @@ export default function App() {
                 user={user}
                 myLists={myLists}
                 onListsChanged={refreshLists}
-                stickyTop={compactVisible ? 84 : 16}
+                stickyTop={compactVisible ? COMPACT_BAR_HEIGHT : 16}
               />
             )}
 
