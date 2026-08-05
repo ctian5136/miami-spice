@@ -1,8 +1,42 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Public-ish profile doc: any signed-in user can look someone up by
+    // name/email and see their picksCount preview before friending them.
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+
+      // Presence of /users/{uid}/friends/{friendUid} means friendUid is a
+      // friend of uid. Either party may write their own entry on either
+      // side, which is what the mutual-accept flow needs.
+      match /friends/{friendUid} {
+        allow read: if request.auth != null && (request.auth.uid == uid || request.auth.uid == friendUid);
+        allow write: if request.auth != null && (request.auth.uid == uid || request.auth.uid == friendUid);
+      }
+    }
+
+    // Want/eaten lists, notes, photo refs. Owner always has full access;
+    // accepted friends get read-only access.
     match /userPicks/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null &&
+        (request.auth.uid == userId ||
+         exists(/databases/$(database)/documents/users/$(userId)/friends/$(request.auth.uid)));
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Friend requests, keyed as "{fromUid}_{toUid}".
+    match /friendRequests/{requestId} {
+      allow create: if request.auth != null &&
+        request.auth.uid == request.resource.data.from &&
+        request.resource.data.status == 'pending';
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.from || request.auth.uid == resource.data.to);
+      allow update: if request.auth != null &&
+        (request.auth.uid == resource.data.from || request.auth.uid == resource.data.to);
+      allow delete: if request.auth != null &&
+        (request.auth.uid == resource.data.from || request.auth.uid == resource.data.to);
     }
   }
 }

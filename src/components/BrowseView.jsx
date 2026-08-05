@@ -1,0 +1,70 @@
+import React, { useMemo, useState } from "react";
+import { RESTAURANTS, FILTERS, HOODS } from "../data/restaurants";
+import { styles } from "../styles";
+import RestaurantCard from "./RestaurantCard";
+
+export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove }) {
+  const [filter, setFilter] = useState("all");
+  const [hood, setHood] = useState("All areas");
+  const [meal, setMeal] = useState("All");
+
+  const list = useMemo(() => {
+    return RESTAURANTS.filter((r) => {
+      if (filter !== "all" && !r.tags.includes(filter)) return false;
+      if (hood !== "All areas" && r.hood !== hood) return false;
+      if (meal === "Lunch" && r.meal === "Dinner") return false;
+      if (meal === "Dinner" && r.meal === "Lunch") return false;
+      return true;
+    }).sort((a, b) => b.stars - a.stars);
+  }, [filter, hood, meal]);
+
+  return (
+    <>
+      <div style={styles.controls}>
+        <div style={styles.chips}>
+          {FILTERS.map((f) => {
+            const Icon = f.icon;
+            const active = filter === f.id;
+            return (
+              <button key={f.id} onClick={() => setFilter(f.id)}
+                style={{ ...styles.chip, ...(active ? styles.chipActive : {}) }}>
+                <Icon size={13} strokeWidth={2.5} />
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+        <div style={styles.selects}>
+          <select value={hood} onChange={(e) => setHood(e.target.value)} style={styles.select}>
+            {HOODS.map((h) => <option key={h}>{h}</option>)}
+          </select>
+          <select value={meal} onChange={(e) => setMeal(e.target.value)} style={styles.select}>
+            {["All", "Lunch", "Dinner"].map((m) => <option key={m}>{m}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div style={styles.grid}>
+        {list.map((r) => (
+          <RestaurantCard
+            key={r.name}
+            restaurant={r}
+            pick={picks[r.name]}
+            onToggleWant={onToggleWant}
+            onMarkEaten={onMarkEaten}
+            onRemove={onRemove}
+          />
+        ))}
+      </div>
+
+      {list.length === 0 && (
+        <div style={styles.empty}>No spots match those filters. Loosen one to see more.</div>
+      )}
+
+      <footer style={styles.footer}>
+        Days, prices & menus vary by restaurant and can change — drinks, tax & tip aren't included.
+        Confirm each on the official Miami Spice site before booking.
+      </footer>
+    </>
+  );
+}

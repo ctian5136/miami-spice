@@ -1,0 +1,224 @@
+import React, { useEffect, useState, useCallback } from "react";
+import { ArrowLeft, Check, X, UserPlus, Search } from "lucide-react";
+import { styles } from "../styles";
+import MyListsView from "./MyListsView";
+import {
+  searchUsers, sendFriendRequest, cancelFriendRequest,
+  fetchIncomingRequests, fetchOutgoingRequests,
+  acceptFriendRequest, declineFriendRequest,
+  fetchFriends, removeFriend, getProfile, getPicks,
+} from "../lib/social";
+
+function PersonRow({ person, subtitle, children }) {
+  return (
+    <div style={styles.personRow}>
+      {person.photoURL ? (
+        <img src={person.photoURL} alt="" style={styles.personAvatar} />
+      ) : (
+        <div style={styles.personAvatar} />
+      )}
+      <div style={styles.personInfo}>
+        <p style={styles.personName}>{person.displayName || person.email || "Unknown"}</p>
+        <p style={styles.personMeta}>{subtitle}</p>
+      </div>
+      <div style={styles.personActions}>{children}</div>
+    </div>
+  );
+}
+
+function restaurantCountLabel(person) {
+  const n = person.picksCount || 0;
+  return `${n} restaurant${n === 1 ? "" : "s"} tracked`;
+}
+
+export default function FriendsView({ user }) {
+  const [searchText, setSearchText] = useState("");
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchMsg, setSearchMsg] = useState("");
+
+  const [incoming, setIncoming] = useState([]);
+  const [outgoing, setOutgoing] = useState([]);
+  const [friends, setFriends] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [selectedPicks, setSelectedPicks] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [inReqs, outReqs, friendList] = await Promise.all([
+      fetchIncomingRequests(user.uid),
+      fetchOutgoingRequests(user.uid),
+      fetchFriends(user.uid),
+    ]);
+    const [inWithProfiles, outWithProfiles] = await Promise.all([
+      Promise.all(inReqs.map(async (r) => ({ ...r, profile: await getProfile(r.from) }))),
+      Promise.all(outReqs.map(async (r) => ({ ...r, profile: await getProfile(r.to) }))),
+    ]);
+    setIncoming(inWithProfiles.filter((r) => r.profile));
+    setOutgoing(outWithProfiles.filter((r) => r.profile));
+    setFriends(friendList);
+    setLoading(false);
+  }, [user.uid]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const friendUids = new Set(friends.map((f) => f.uid));
+  const outgoingUids = new Set(outgoing.map((r) => r.to));
+  const incomingUids = new Set(incoming.map((r) => r.from));
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setSearchMsg("");
+    setSearching(true);
+    try {
+      const found = await searchUsers(searchText, user.uid);
+      setResults(found);
+      if (found.length === 0) setSearchMsg("No one found. Try their exact email or the start of their name.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleSend = async (toUid) => {
+    setSearchMsg("");
+    try {
+      await sendFriendRequest(user, toUid);
+      await load();
+    } catch (err) {
+      setSearchMsg(err.message);
+    }
+  };
+
+  const handleAccept = async (req) => {
+    await acceptFriendRequest(req);
+    await load();
+  };
+  const handleDecline = async (req) => {
+    await declineFriendRequest(req);
+    await load();
+  };
+  const handleCancel = async (req) => {
+    await cancelFriendRequest(req.from, req.to);
+    await load();
+  };
+  const handleRemove = async (friendUid) => {
+    await removeFriend(user.uid, friendUid);
+    await load();
+  };
+
+  const openFriend = async (friend) => {
+    setSelectedFriend(friend);
+    setSelectedPicks(null);
+    const picks = await getPicks(friend.uid);
+    setSelectedPicks(picks);
+  };
+
+  if (selectedFriend) {
+    return (
+      <>
+        <div style={{ ...styles.section, paddingBottom: 0 }}>
+          <button
+            style={{ ...styles.secondaryBtn, display: "inline-flex", alignItems: "center", gap: 6 }}
+            onClick={() => setSelectedFriend(null)}
+          >
+            <ArrowLeft size={14} strokeWidth={2.5} /> Back to friends
+          </button>
+        </div>
+        {selectedPicks === null ? (
+          <div style={styles.empty}>Loading…</div>
+        ) : (
+          <MyListsView picks={selectedPicks} readOnly ownerLabel={`${selectedFriend.displayName || "Their"}'s`} />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div style={styles.section}>
+      <h2 style={styles.sectionTitle}>Add a friend</h2>
+      <p style={styles.sectionSub}>Search by name or email. They'll need to accept before you see each other's lists.</p>
+
+      <form onSubmit={handleSearch} style={styles.searchRow}>
+        <input
+          style={styles.input}
+          placeholder="Name or email"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+        <button type="submit" style={styles.primaryBtn} disabled={searching}>
+          <Search size={14} strokeWidth={2.5} />
+        </button>
+      </form>
+      {searchMsg && <p style={styles.errorText}>{searchMsg}</p>}
+
+      {results.map((person) => {
+        const isFriend = friendUids.has(person.uid);
+        const isOutgoing = outgoingUids.has(person.uid);
+        const isIncoming = incomingUids.has(person.uid);
+        return (
+          <PersonRow key={person.uid} person={person} subtitle={restaurantCountLabel(person)}>
+            {isFriend && <span style={{ ...styles.badge, ...styles.badgeEaten }}>Friends</span>}
+            {!isFriend && isOutgoing && <span style={{ ...styles.badge, ...styles.badgeWant }}>Requested</span>}
+            {!isFriend && isIncoming && <span style={{ ...styles.badge, ...styles.badgeWant }}>Sent you a request</span>}
+            {!isFriend && !isOutgoing && !isIncoming && (
+              <button style={styles.secondaryBtn} onClick={() => handleSend(person.uid)}>
+                <UserPlus size={14} strokeWidth={2.5} /> Add
+              </button>
+            )}
+          </PersonRow>
+        );
+      })}
+
+      {loading ? (
+        <div style={styles.empty}>Loading…</div>
+      ) : (
+        <>
+          {incoming.length > 0 && (
+            <>
+              <h3 style={{ ...styles.sectionTitle, fontSize: 18, marginTop: 28 }}>Friend requests</h3>
+              {incoming.map((req) => (
+                <PersonRow key={req.id} person={req.profile} subtitle={restaurantCountLabel(req.profile)}>
+                  <button style={{ ...styles.actionBtn, ...styles.actionBtnEaten }} onClick={() => handleAccept(req)}>
+                    <Check size={14} strokeWidth={2.5} /> Accept
+                  </button>
+                  <button style={styles.removeBtn} onClick={() => handleDecline(req)}>
+                    <X size={14} strokeWidth={2.5} />
+                  </button>
+                </PersonRow>
+              ))}
+            </>
+          )}
+
+          {outgoing.length > 0 && (
+            <>
+              <h3 style={{ ...styles.sectionTitle, fontSize: 18, marginTop: 28 }}>Pending (sent)</h3>
+              {outgoing.map((req) => (
+                <PersonRow key={req.id} person={req.profile} subtitle="Waiting for them to accept">
+                  <button style={styles.removeBtn} onClick={() => handleCancel(req)}>Cancel</button>
+                </PersonRow>
+              ))}
+            </>
+          )}
+
+          <h3 style={{ ...styles.sectionTitle, fontSize: 18, marginTop: 28 }}>Your friends</h3>
+          {friends.length === 0 ? (
+            <div style={styles.empty}>No friends yet — search above to add one.</div>
+          ) : (
+            friends.map((friend) => (
+              <PersonRow key={friend.uid} person={friend} subtitle={restaurantCountLabel(friend)}>
+                <button style={styles.secondaryBtn} onClick={() => openFriend(friend)}>View lists</button>
+                <button style={styles.removeBtn} onClick={() => handleRemove(friend.uid)}>
+                  <X size={14} strokeWidth={2.5} />
+                </button>
+              </PersonRow>
+            ))
+          )}
+        </>
+      )}
+    </div>
+  );
+}
