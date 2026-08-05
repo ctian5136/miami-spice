@@ -350,6 +350,18 @@ export const styles = {
   friendReviewName: { fontSize: 13, fontWeight: 700, color: colors.text, margin: "0 0 4px" },
   dialogTitle: { fontFamily: "'Georgia', serif", fontSize: 21, fontWeight: 700, margin: "0 0 4px", color: colors.text },
   dialogSub: { fontSize: 13, color: colors.textSoft, margin: "0 0 18px" },
+
+  tutorialIconWrap: {
+    width: 56, height: 56, borderRadius: 999, background: colors.accentSoftBg,
+    display: "flex", alignItems: "center", justifyContent: "center", margin: "4px auto 20px",
+  },
+  tutorialDots: { display: "flex", justifyContent: "center", gap: 7, marginBottom: 22 },
+  tutorialDot: {
+    width: 7, height: 7, borderRadius: 999, background: colors.border,
+    border: "none", padding: 0, cursor: "pointer",
+  },
+  tutorialDotActive: { background: colors.accent, width: 18 },
+  tutorialNavRow: { display: "flex", justifyContent: "space-between", gap: 10 },
   label: { fontSize: 12.5, fontWeight: 700, color: colors.textSoft, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6, display: "block" },
   textarea: {
     width: "100%", minHeight: 90, borderRadius: 12, border: `1.5px solid ${colors.border}`,

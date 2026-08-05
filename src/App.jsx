@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, HelpCircle } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import { styles, keyframes, colors, COMPACT_BAR_HEIGHT } from "./styles";
@@ -11,6 +11,7 @@ import BrowseView from "./components/BrowseView";
 import MyListsView from "./components/MyListsView";
 import FriendsView from "./components/FriendsView";
 import EatenDialog from "./components/EatenDialog";
+import TutorialModal from "./components/TutorialModal";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -23,15 +24,24 @@ export default function App() {
   const [eatenDialogFor, setEatenDialogFor] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [compactVisible, setCompactVisible] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const sentinelRef = useRef(null);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
       setUser(u);
       setAuthReady(true);
-      if (u) upsertProfile(u);
+      if (u) {
+        upsertProfile(u);
+        if (!localStorage.getItem(`tutorialSeen:${u.uid}`)) setShowTutorial(true);
+      }
     });
   }, []);
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    if (user) localStorage.setItem(`tutorialSeen:${user.uid}`, "1");
+  };
 
   const refreshLists = async () => {
     if (!user) return;
@@ -145,6 +155,16 @@ export default function App() {
           Signed in as
           <span style={styles.profileWhoName}>{user.displayName}</span>
         </div>
+        <button
+          style={styles.profileMenuBtn}
+          onClick={() => {
+            setProfileOpen(false);
+            setShowTutorial(true);
+          }}
+        >
+          <HelpCircle size={13} strokeWidth={2.5} style={{ marginRight: 6, verticalAlign: -2 }} />
+          Take a quick tour
+        </button>
         <button
           style={styles.profileMenuBtn}
           onClick={() => {
@@ -289,6 +309,8 @@ export default function App() {
       )}
 
       <MobileNav tab={tab} setTab={setTab} onOpenList={setOpenListId} incomingCount={incomingCount} />
+
+      {showTutorial && <TutorialModal onClose={closeTutorial} />}
     </div>
   );
 }
