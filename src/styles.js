@@ -355,6 +355,10 @@ export const styles = {
     width: 56, height: 56, borderRadius: 999, background: colors.accentSoftBg,
     display: "flex", alignItems: "center", justifyContent: "center", margin: "4px auto 20px",
   },
+  tutorialImage: {
+    display: "block", margin: "0 auto 20px", maxWidth: "100%", maxHeight: 320,
+    borderRadius: 14, border: `1px solid ${colors.border}`, boxShadow: "0 6px 20px rgba(59,46,34,0.10)",
+  },
   tutorialDots: { display: "flex", justifyContent: "center", gap: 7, marginBottom: 22 },
   tutorialDot: {
     width: 7, height: 7, borderRadius: 999, background: colors.border,
