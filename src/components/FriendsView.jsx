@@ -54,6 +54,7 @@ export default function FriendsView({ user }) {
   const [outgoing, setOutgoing] = useState([]);
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [friendFilter, setFriendFilter] = useState("");
 
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [selectedPicks, setSelectedPicks] = useState(null);
@@ -82,6 +83,12 @@ export default function FriendsView({ user }) {
   const friendUids = new Set(friends.map((f) => f.uid));
   const outgoingUids = new Set(outgoing.map((r) => r.to));
   const incomingUids = new Set(incoming.map((r) => r.from));
+
+  const visibleFriends = friendFilter.trim()
+    ? friends.filter((f) =>
+        (f.displayName || f.email || "").toLowerCase().includes(friendFilter.trim().toLowerCase())
+      )
+    : friends;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -255,6 +262,15 @@ export default function FriendsView({ user }) {
       </div>
       <p style={styles.sectionSub}>See what your friends want to eat and have eaten.</p>
 
+      {friends.length > 5 && (
+        <input
+          style={{ ...styles.input, marginBottom: 14 }}
+          placeholder="Filter friends by name or email"
+          value={friendFilter}
+          onChange={(e) => setFriendFilter(e.target.value)}
+        />
+      )}
+
       {loading ? (
         <div style={styles.empty}>Loading…</div>
       ) : friends.length === 0 ? (
@@ -265,8 +281,10 @@ export default function FriendsView({ user }) {
             <UserPlus size={14} strokeWidth={2.5} /> Add your first friend
           </button>
         </div>
+      ) : visibleFriends.length === 0 ? (
+        <div style={styles.empty}>No friends match "{friendFilter}".</div>
       ) : (
-        friends.map((friend) => (
+        visibleFriends.map((friend) => (
           <PersonRow key={friend.uid} person={friend} subtitle={restaurantCountLabel(friend)}>
             <button style={styles.secondaryBtn} onClick={() => openFriend(friend)}>View lists</button>
             <button style={styles.removeBtn} onClick={() => handleRemove(friend.uid)}>

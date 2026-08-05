@@ -157,7 +157,7 @@ export const styles = {
   },
   sidebarSticky: {
     position: "sticky",
-    margin: "24px 12px 24px 24px", padding: "14px 12px", boxSizing: "border-box",
+    margin: "18px 12px 24px 24px", padding: "14px 12px", boxSizing: "border-box",
     background: colors.cardBg, borderRadius: 20,
     boxShadow: "0 10px 30px rgba(59,46,34,0.10)",
   },
