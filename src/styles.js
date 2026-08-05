@@ -27,6 +27,10 @@ export const keyframes = `
     .poster-grid{grid-template-columns:1fr !important}
     .poster-rail{display:none !important}
     .poster-main{min-height:180px !important; padding-top:40px !important}
+    .restaurant-grid{grid-template-columns:1fr !important}
+  }
+  @media (max-width:960px) and (min-width:641px){
+    .restaurant-grid{grid-template-columns:repeat(2, minmax(0, 1fr)) !important}
   }
 `;
 
@@ -139,23 +143,26 @@ export const styles = {
     marginTop: 3, fontSize: 11, letterSpacing: "0.03em", textTransform: "uppercase", color: colors.accentDark,
   },
 
-  appShell: { maxWidth: 1280, margin: "0 auto" },
+  appShell: { maxWidth: 1520, margin: "0 auto" },
   appBody: { display: "flex" },
   mainCol: { flex: 1, minWidth: 0 },
 
   sidebarColumn: {
-    width: 216, flexShrink: 0, background: colors.cream, borderRight: `1px solid ${colors.border}`,
+    width: 248, flexShrink: 0,
   },
   sidebarSticky: {
-    position: "sticky", padding: "20px 12px 32px", transition: "top 0.2s ease",
+    position: "sticky", transition: "top 0.2s ease",
+    margin: "24px 12px 24px 24px", padding: "14px 12px", boxSizing: "border-box",
+    background: colors.cardBg, borderRadius: 20,
+    border: `1px solid ${colors.border}`, boxShadow: "0 10px 30px rgba(59,46,34,0.10)",
   },
   navRow: {
-    display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 8,
-    marginBottom: 3, fontSize: 13, fontWeight: 600, color: "#8B6F52",
-    borderLeft: "3px solid transparent", cursor: "pointer", background: "none", border: "none",
+    display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14,
+    marginBottom: 4, fontSize: 15, fontWeight: 700, color: colors.text,
+    cursor: "pointer", background: "none", border: "none",
     width: "100%", textAlign: "left", fontFamily: "inherit",
   },
-  navRowActive: { background: "rgba(192,90,18,0.14)", color: colors.accentDark, borderLeftColor: colors.accent },
+  navRowActive: { background: colors.accent, color: colors.cream },
   navCountBadge: {
     marginLeft: "auto", fontSize: 10, fontWeight: 700, background: colors.terracotta,
     color: colors.cream, borderRadius: 999, padding: "1px 6px",
@@ -177,13 +184,24 @@ export const styles = {
   compactBarVisible: { transform: "translateY(0)", opacity: 1, pointerEvents: "auto" },
   compactWord: { fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 20, color: colors.cream, letterSpacing: "-0.01em" },
   compactWordKicker: { opacity: 0.7, fontWeight: 700, fontSize: 11, marginRight: 6, textTransform: "uppercase", letterSpacing: "0.2em" },
+  compactRight: { display: "flex", alignItems: "center", gap: 22 },
+  compactStats: { display: "flex", alignItems: "center", gap: 18 },
+  compactStat: { display: "flex", alignItems: "baseline", gap: 5 },
+  compactStatNum: { fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 17, color: colors.cream },
+  compactStatLabel: {
+    fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
+    color: "rgba(252,234,203,0.75)",
+  },
   compactAvatarBtn: {
     width: 34, height: 34, borderRadius: 999, padding: 0, overflow: "hidden", flexShrink: 0,
     background: colors.accentSoftBg, border: `1.5px solid ${colors.cream}`,
     display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
   },
 
-  controls: { padding: "22px 24px 0" },
+  controls: {
+    padding: "18px 24px 14px", position: "sticky", zIndex: 20,
+    background: colors.bg,
+  },
   chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 },
   chip: {
     display: "inline-flex", alignItems: "center", gap: 6,
@@ -201,7 +219,7 @@ export const styles = {
 
   grid: {
     margin: "22px 0 0", padding: "0 24px",
-    display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16,
+    display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 16,
   },
   card: {
     textAlign: "left", border: `1.5px solid ${colors.border}`,

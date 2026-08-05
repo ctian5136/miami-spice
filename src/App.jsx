@@ -153,15 +153,27 @@ export default function App() {
         <div style={styles.compactWord}>
           <span style={styles.compactWordKicker}>Miami</span>SPICE
         </div>
-        <div style={{ position: "relative" }}>
-          <button style={styles.compactAvatarBtn} onClick={() => setProfileOpen((o) => !o)}>
-            {user.photoURL ? (
-              <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
-            ) : (
-              <User size={16} color={colors.accent} strokeWidth={2.5} />
-            )}
-          </button>
-          {profileMenu}
+        <div style={styles.compactRight}>
+          <div style={styles.compactStats}>
+            <div style={styles.compactStat}>
+              <span style={styles.compactStatNum}>{myLists.length}</span>
+              <span style={styles.compactStatLabel}>Lists</span>
+            </div>
+            <div style={styles.compactStat}>
+              <span style={styles.compactStatNum}>{eatenCount}</span>
+              <span style={styles.compactStatLabel}>Eaten</span>
+            </div>
+          </div>
+          <div style={{ position: "relative" }}>
+            <button style={styles.compactAvatarBtn} onClick={() => setProfileOpen((o) => !o)}>
+              {user.photoURL ? (
+                <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
+              ) : (
+                <User size={16} color={colors.accent} strokeWidth={2.5} />
+              )}
+            </button>
+            {profileMenu}
+          </div>
         </div>
       </div>
 
@@ -221,6 +233,7 @@ export default function App() {
                 user={user}
                 myLists={myLists}
                 onListsChanged={refreshLists}
+                stickyTop={compactVisible ? 84 : 16}
               />
             )}
 

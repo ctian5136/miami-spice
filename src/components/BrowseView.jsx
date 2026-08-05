@@ -9,7 +9,7 @@ const CUISINES = ["All cuisines", ...new Set(RESTAURANTS.map((r) => r.cuisine))]
   (a, b) => (a === "All cuisines" ? -1 : b === "All cuisines" ? 1 : a.localeCompare(b))
 );
 
-export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists, onListsChanged }) {
+export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists, onListsChanged, stickyTop }) {
   const [filter, setFilter] = useState("all");
   const [hood, setHood] = useState("All areas");
   const [meal, setMeal] = useState("All");
@@ -30,7 +30,7 @@ export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists
 
   return (
     <>
-      <div style={styles.controls}>
+      <div style={{ ...styles.controls, top: stickyTop }}>
         <div style={styles.chips}>
           {FILTERS.map((f) => {
             const Icon = f.icon;
@@ -57,7 +57,7 @@ export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists
         </div>
       </div>
 
-      <div style={styles.grid}>
+      <div style={styles.grid} className="restaurant-grid">
         {list.map((r) => (
           <RestaurantCard
             key={r.name}

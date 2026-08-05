@@ -3,7 +3,7 @@ import { colors, styles } from "../styles";
 
 function SearchIcon({ active }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.accentDark : "#8B6F52"} strokeWidth="2" strokeLinecap="round" width="15" height="15">
+    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.cream : colors.text} strokeWidth="2" strokeLinecap="round" width="15" height="15">
       <circle cx="11" cy="11" r="7" />
       <path d="M21 21l-4.3-4.3" />
     </svg>
@@ -11,14 +11,14 @@ function SearchIcon({ active }) {
 }
 function ListIcon({ active }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.accentDark : "#8B6F52"} strokeWidth="2" strokeLinecap="round" width="15" height="15">
+    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.cream : colors.text} strokeWidth="2" strokeLinecap="round" width="15" height="15">
       <path d="M4 6h16M4 12h16M4 18h10" />
     </svg>
   );
 }
 function FriendsIcon({ active }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.accentDark : "#8B6F52"} strokeWidth="2" strokeLinecap="round" width="15" height="15">
+    <svg viewBox="0 0 24 24" fill="none" stroke={active ? colors.cream : colors.text} strokeWidth="2" strokeLinecap="round" width="15" height="15">
       <circle cx="9" cy="8" r="3.2" />
       <path d="M3.5 19c1.2-3.5 3.6-5 5.5-5s4.3 1.5 5.5 5" />
       <circle cx="18" cy="9" r="2.4" />
