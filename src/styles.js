@@ -33,6 +33,12 @@ export const keyframes = `
     .poster-rail{display:none !important}
     .poster-main{min-height:180px !important; padding-top:40px !important}
     .restaurant-grid{grid-template-columns:1fr !important}
+    .app-body{flex-direction:column !important}
+    .sidebar-column{width:100% !important}
+    .sidebar-sticky{position:static !important; margin:12px 16px !important}
+    .filters-toggle-btn{display:flex !important}
+    .filters-panel{display:none !important; margin-top:12px !important}
+    .filters-panel.filters-panel-open{display:flex !important}
   }
   @media (max-width:960px) and (min-width:641px){
     .restaurant-grid{grid-template-columns:repeat(2, minmax(0, 1fr)) !important}
@@ -211,6 +217,13 @@ export const styles = {
     padding: "18px 24px 14px", position: "sticky", zIndex: 20,
     background: colors.bg,
   },
+  filtersToggleBtn: {
+    display: "none", alignItems: "center", justifyContent: "center", gap: 8,
+    width: "100%", padding: "11px 16px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
+    background: "#fff", color: colors.text, fontSize: 13.5, fontWeight: 700,
+    cursor: "pointer", fontFamily: "inherit",
+  },
+  filtersPanel: { display: "flex", flexDirection: "column" },
   chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 },
   chip: {
     display: "inline-flex", alignItems: "center", gap: 6,

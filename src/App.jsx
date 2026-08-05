@@ -231,9 +231,9 @@ export default function App() {
       <div ref={sentinelRef} />
 
       <div style={styles.appShell}>
-        <div style={styles.appBody}>
-          <div style={styles.sidebarColumn}>
-            <div style={{ ...styles.sidebarSticky, top: compactVisible ? COMPACT_BAR_HEIGHT : 16 }}>
+        <div style={styles.appBody} className="app-body">
+          <div style={styles.sidebarColumn} className="sidebar-column">
+            <div style={{ ...styles.sidebarSticky, top: compactVisible ? COMPACT_BAR_HEIGHT : 16 }} className="sidebar-sticky">
               <Sidebar
                 tab={tab}
                 setTab={setTab}

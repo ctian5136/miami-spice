@@ -119,7 +119,7 @@ export default function MyListsView({
       {eaten.length === 0 ? (
         <div style={styles.empty}>Nothing here yet.</div>
       ) : (
-        <div style={styles.grid}>
+        <div style={styles.grid} className="restaurant-grid">
           {eaten.map((r) => (
             <RestaurantCard
               key={r.name}

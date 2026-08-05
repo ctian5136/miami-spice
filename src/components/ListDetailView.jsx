@@ -114,7 +114,7 @@ export default function ListDetailView({ list, user, picks, onMarkEaten, onRemov
       ) : restaurants.length === 0 ? (
         <div style={styles.empty}>No restaurants on this list yet — add some from Browse.</div>
       ) : (
-        <div style={styles.grid}>
+        <div style={styles.grid} className="restaurant-grid">
           {restaurants.map(({ item, restaurant }) => (
             <div key={restaurant.name}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9A7358", marginBottom: 4, padding: "0 2px" }}>
