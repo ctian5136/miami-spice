@@ -3,17 +3,19 @@ import { RESTAURANTS, FILTERS, HOODS } from "../data/restaurants";
 import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
 import DetailModal from "./DetailModal";
+import ListPicker from "./ListPicker";
 
 const CUISINES = ["All cuisines", ...new Set(RESTAURANTS.map((r) => r.cuisine))].sort(
   (a, b) => (a === "All cuisines" ? -1 : b === "All cuisines" ? 1 : a.localeCompare(b))
 );
 
-export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove, user }) {
+export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists, onListsChanged }) {
   const [filter, setFilter] = useState("all");
   const [hood, setHood] = useState("All areas");
   const [meal, setMeal] = useState("All");
   const [cuisine, setCuisine] = useState("All cuisines");
   const [detailRestaurant, setDetailRestaurant] = useState(null);
+  const [pickerRestaurant, setPickerRestaurant] = useState(null);
 
   const list = useMemo(() => {
     return RESTAURANTS.filter((r) => {
@@ -61,7 +63,7 @@ export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove,
             key={r.name}
             restaurant={r}
             pick={picks[r.name]}
-            onToggleWant={onToggleWant}
+            onOpenListPicker={setPickerRestaurant}
             onMarkEaten={onMarkEaten}
             onRemove={onRemove}
             onOpenDetail={setDetailRestaurant}
@@ -80,6 +82,16 @@ export default function BrowseView({ picks, onToggleWant, onMarkEaten, onRemove,
 
       {detailRestaurant && (
         <DetailModal restaurant={detailRestaurant} user={user} onClose={() => setDetailRestaurant(null)} />
+      )}
+
+      {pickerRestaurant && (
+        <ListPicker
+          restaurantName={pickerRestaurant}
+          user={user}
+          myLists={myLists}
+          onListsChanged={onListsChanged}
+          onClose={() => setPickerRestaurant(null)}
+        />
       )}
     </>
   );

@@ -1,46 +1,105 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import { RESTAURANTS } from "../data/restaurants";
 import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
 import DetailModal from "./DetailModal";
+import ListDetailView from "./ListDetailView";
+import { createList, fetchListItems } from "../lib/lists";
 
 const noop = () => {};
 
 export default function MyListsView({
   picks,
   readOnly = false,
-  onToggleWant = noop,
   onMarkEaten = noop,
   onRemove = noop,
   ownerLabel = "Your",
   user,
+  myLists = [],
+  onListsChanged = noop,
 }) {
   const [detailRestaurant, setDetailRestaurant] = useState(null);
-  const want = RESTAURANTS.filter((r) => picks[r.name]?.status === "want");
+  const [openListId, setOpenListId] = useState(null);
+  const [counts, setCounts] = useState({});
+  const [newListName, setNewListName] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    if (readOnly || myLists.length === 0) return;
+    let cancelled = false;
+    Promise.all(myLists.map(async (l) => [l.id, (await fetchListItems(l.id)).length])).then((pairs) => {
+      if (!cancelled) setCounts(Object.fromEntries(pairs));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [myLists, readOnly]);
+
+  const handleCreateList = async () => {
+    const name = newListName.trim();
+    if (!name) return;
+    setCreating(true);
+    try {
+      await createList(user, name);
+      setNewListName("");
+      await onListsChanged();
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const eaten = RESTAURANTS.filter((r) => picks[r.name]?.status === "eaten");
+
+  const openList = myLists.find((l) => l.id === openListId);
+  if (openList) {
+    return (
+      <ListDetailView
+        list={openList}
+        user={user}
+        picks={picks}
+        onMarkEaten={onMarkEaten}
+        onRemove={onRemove}
+        myLists={myLists}
+        onListsChanged={onListsChanged}
+        onBack={() => setOpenListId(null)}
+      />
+    );
+  }
 
   return (
     <>
-      <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>{ownerLabel} Want to Eat list</h2>
-        <p style={styles.sectionSub}>{want.length} spot{want.length === 1 ? "" : "s"}</p>
-      </div>
-      {want.length === 0 ? (
-        <div style={styles.empty}>Nothing here yet.</div>
-      ) : (
-        <div style={styles.grid}>
-          {want.map((r) => (
-            <RestaurantCard
-              key={r.name}
-              restaurant={r}
-              pick={picks[r.name]}
-              readOnly={readOnly}
-              onToggleWant={onToggleWant}
-              onMarkEaten={onMarkEaten}
-              onRemove={onRemove}
-              onOpenDetail={setDetailRestaurant}
+      {!readOnly && (
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>Your Lists</h2>
+          <p style={styles.sectionSub}>Make as many as you want, and invite people to plan together.</p>
+
+          {myLists.length > 0 && (
+            <div style={styles.listsGrid}>
+              {myLists.map((l) => (
+                <button key={l.id} style={styles.listCard} onClick={() => setOpenListId(l.id)}>
+                  <h3 style={styles.listCardName}>{l.name}</h3>
+                  <span style={styles.listCardMeta}>
+                    {counts[l.id] ?? "…"} spot{counts[l.id] === 1 ? "" : "s"}
+                    {l.memberIds.length > 1 ? ` · ${l.memberIds.length} people` : ""}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div style={styles.newListRow}>
+            <input
+              style={styles.input}
+              placeholder="New list name"
+              value={newListName}
+              onChange={(e) => setNewListName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCreateList()}
             />
-          ))}
+            <button style={styles.primaryBtn} onClick={handleCreateList} disabled={creating || !newListName.trim()}>
+              <Plus size={14} strokeWidth={2.5} /> New list
+            </button>
+          </div>
         </div>
       )}
 
@@ -60,7 +119,6 @@ export default function MyListsView({
               restaurant={r}
               pick={picks[r.name]}
               readOnly={readOnly}
-              onToggleWant={onToggleWant}
               onMarkEaten={onMarkEaten}
               onRemove={onRemove}
               onOpenDetail={setDetailRestaurant}

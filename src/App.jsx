@@ -3,7 +3,8 @@ import { LogOut, User } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import { styles, keyframes, colors } from "./styles";
-import { upsertProfile, getPicks, setWant, saveEaten, removePick } from "./lib/social";
+import { upsertProfile, getPicks, saveEaten, removePick } from "./lib/social";
+import { fetchMyLists, createList, addItemToList } from "./lib/lists";
 import BrowseView from "./components/BrowseView";
 import MyListsView from "./components/MyListsView";
 import FriendsView from "./components/FriendsView";
@@ -19,6 +20,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [picks, setPicks] = useState({});
+  const [myLists, setMyLists] = useState([]);
   const [tab, setTab] = useState("browse");
   const [eatenDialogFor, setEatenDialogFor] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -31,21 +33,40 @@ export default function App() {
     });
   }, []);
 
+  const refreshLists = async () => {
+    if (!user) return;
+    setMyLists(await fetchMyLists(user.uid));
+  };
+
   useEffect(() => {
     if (!user) {
       setPicks({});
+      setMyLists([]);
       return;
     }
-    getPicks(user.uid).then(setPicks);
+    (async () => {
+      const [fetchedPicks, lists] = await Promise.all([getPicks(user.uid), fetchMyLists(user.uid)]);
+      setPicks(fetchedPicks);
+
+      // One-time migration: fold any legacy "want to eat" picks into a
+      // default list, so nothing looks lost after the multi-list rework.
+      if (lists.length === 0) {
+        const wantNames = Object.entries(fetchedPicks)
+          .filter(([, p]) => p.status === "want")
+          .map(([name]) => name);
+        if (wantNames.length > 0) {
+          const listId = await createList(user, "Want to Eat");
+          await Promise.all(wantNames.map((name) => addItemToList(listId, name, user)));
+          setMyLists(await fetchMyLists(user.uid));
+          return;
+        }
+      }
+      setMyLists(lists);
+    })();
   }, [user]);
 
   const login = () => signInWithPopup(auth, googleProvider);
   const logout = () => signOut(auth);
-
-  const handleToggleWant = async (name) => {
-    await setWant(user.uid, name, picks);
-    setPicks(await getPicks(user.uid));
-  };
 
   const handleMarkEaten = (name) => setEatenDialogFor(name);
 
@@ -60,7 +81,6 @@ export default function App() {
     setPicks(await getPicks(user.uid));
   };
 
-  const wantCount = Object.values(picks).filter((p) => p.status === "want").length;
   const eatenCount = Object.values(picks).filter((p) => p.status === "eaten").length;
 
   if (!authReady) {
@@ -134,8 +154,8 @@ export default function App() {
           <div style={styles.posterRule} />
           <div style={styles.posterStats}>
             <div>
-              <div style={styles.statNum}>{wantCount}</div>
-              <div style={styles.statLabel}>Want to eat</div>
+              <div style={styles.statNum}>{myLists.length}</div>
+              <div style={styles.statLabel}>Lists</div>
             </div>
             <div>
               <div style={styles.statNum}>{eatenCount}</div>
@@ -160,20 +180,22 @@ export default function App() {
       {tab === "browse" && (
         <BrowseView
           picks={picks}
-          onToggleWant={handleToggleWant}
           onMarkEaten={handleMarkEaten}
           onRemove={handleRemove}
           user={user}
+          myLists={myLists}
+          onListsChanged={refreshLists}
         />
       )}
 
       {tab === "mylists" && (
         <MyListsView
           picks={picks}
-          onToggleWant={handleToggleWant}
           onMarkEaten={handleMarkEaten}
           onRemove={handleRemove}
           user={user}
+          myLists={myLists}
+          onListsChanged={refreshLists}
         />
       )}
 

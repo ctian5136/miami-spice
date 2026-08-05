@@ -143,20 +143,6 @@ export async function getPicks(uid) {
   return snap.exists() ? snap.data().picks || {} : {};
 }
 
-export async function setWant(uid, name, currentPicks) {
-  const existing = currentPicks[name];
-  const next = existing?.status === "want"
-    ? undefined // toggle off
-    : { status: "want", notes: existing?.notes || "", photos: existing?.photos || [], updatedAt: Date.now() };
-
-  if (next) {
-    await setDoc(doc(db, "userPicks", uid), { picks: { [name]: next } }, { merge: true });
-  } else {
-    await updateDoc(doc(db, "userPicks", uid), { [`picks.${name}`]: deleteField() });
-  }
-  await syncPicksCount(uid, currentPicks, name, next);
-}
-
 export async function saveEaten(uid, name, { notes, photos }, currentPicks) {
   const next = { status: "eaten", notes: notes || "", photos: photos || [], updatedAt: Date.now() };
   await setDoc(doc(db, "userPicks", uid), { picks: { [name]: next } }, { merge: true });

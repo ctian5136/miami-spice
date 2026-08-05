@@ -1,12 +1,12 @@
 import React from "react";
-import { Star, MapPin, Heart, UtensilsCrossed, X } from "lucide-react";
+import { Star, MapPin, ListPlus, UtensilsCrossed, X } from "lucide-react";
 import { styles, colors } from "../styles";
 
 export default function RestaurantCard({
   restaurant,
   pick,
   readOnly = false,
-  onToggleWant,
+  onOpenListPicker,
   onMarkEaten,
   onRemove,
   onOpenDetail,
@@ -16,7 +16,6 @@ export default function RestaurantCard({
 
   const cardStyle = {
     ...styles.card,
-    ...(status === "want" ? styles.cardWant : {}),
     ...(status === "eaten" ? styles.cardEaten : {}),
     ...(onOpenDetail ? { cursor: "pointer" } : {}),
   };
@@ -39,14 +38,8 @@ export default function RestaurantCard({
             <span>{r.cuisine}</span>
           </div>
         </div>
-        <span
-          style={{
-            ...styles.badge,
-            ...(status === "want" ? styles.badgeWant : status === "eaten" ? styles.badgeEaten : styles.badgeWant),
-            ...(status ? {} : styles.badgeHidden),
-          }}
-        >
-          {status === "eaten" ? "Eaten" : "Want to eat"}
+        <span style={{ ...styles.badge, ...styles.badgeEaten, ...(status === "eaten" ? {} : styles.badgeHidden) }}>
+          Eaten
         </span>
       </div>
 
@@ -68,12 +61,9 @@ export default function RestaurantCard({
 
       {!readOnly && (
         <div style={styles.cardActions} onClick={(e) => e.stopPropagation()}>
-          <button
-            style={{ ...styles.actionBtn, ...(status === "want" ? styles.actionBtnWant : {}) }}
-            onClick={() => onToggleWant(r.name)}
-          >
-            <Heart size={13} strokeWidth={2.5} />
-            {status === "want" ? "Craving" : "Want to eat"}
+          <button style={styles.actionBtn} onClick={() => onOpenListPicker(r.name)}>
+            <ListPlus size={13} strokeWidth={2.5} />
+            Add to list
           </button>
           <button
             style={{ ...styles.actionBtn, ...(status === "eaten" ? styles.actionBtnEaten : {}) }}
@@ -83,10 +73,10 @@ export default function RestaurantCard({
             {status === "eaten" ? "Edit" : "Mark eaten"}
           </button>
           <button
-            style={{ ...styles.removeBtn, ...(status ? {} : styles.removeBtnHidden) }}
+            style={{ ...styles.removeBtn, ...(status === "eaten" ? {} : styles.removeBtnHidden) }}
             onClick={() => onRemove(r.name)}
-            title="Remove from lists"
-            tabIndex={status ? 0 : -1}
+            title="Remove eaten status"
+            tabIndex={status === "eaten" ? 0 : -1}
           >
             <X size={14} strokeWidth={2.5} />
           </button>

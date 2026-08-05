@@ -273,6 +273,43 @@ export const styles = {
   },
   errorText: { fontSize: 12.5, color: "#A9423F", margin: "8px 0 0" },
 
+  listPickerRow: {
+    display: "flex", alignItems: "center", gap: 10, padding: "10px 12px",
+    borderRadius: 10, border: `1.5px solid ${colors.border}`, marginBottom: 8, cursor: "pointer",
+  },
+  listPickerRowChecked: { borderColor: colors.accent, background: colors.accentSoftBg },
+  listPickerCheckbox: { width: 16, height: 16, accentColor: colors.accent, flexShrink: 0 },
+  listPickerName: { flex: 1, fontSize: 13.5, fontWeight: 600, color: colors.text, minWidth: 0 },
+  listPickerMeta: { fontSize: 11.5, color: colors.textSoft },
+  newListRow: { display: "flex", gap: 8, marginTop: 14 },
+
+  listsGrid: {
+    display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 14, marginBottom: 8,
+  },
+  listCard: {
+    textAlign: "left", border: `1.5px solid ${colors.border}`, background: colors.cardBg,
+    borderRadius: 16, padding: 18, cursor: "pointer", fontFamily: "inherit",
+    display: "flex", flexDirection: "column", gap: 8,
+  },
+  listCardName: { fontFamily: "'Georgia', serif", fontSize: 17, fontWeight: 700, margin: 0, color: colors.text },
+  listCardMeta: { fontSize: 12, color: colors.textSoft },
+  listCardAvatars: { display: "flex" },
+  listCardAvatarImg: {
+    width: 24, height: 24, borderRadius: 999, objectFit: "cover",
+    border: `2px solid ${colors.cardBg}`, marginLeft: -8, background: colors.accentSoftBg,
+  },
+
+  listHeaderRow: {
+    display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 4,
+  },
+  listMembersRow: { display: "flex", alignItems: "center", gap: 10, marginBottom: 18, flexWrap: "wrap" },
+
+  commentRow: { display: "flex", gap: 8, marginBottom: 12 },
+  commentAvatar: { width: 26, height: 26, borderRadius: 999, objectFit: "cover", flexShrink: 0, background: colors.accentSoftBg },
+  commentAuthor: { fontSize: 12, fontWeight: 700, color: colors.text, margin: 0 },
+  commentText: { fontSize: 13, color: colors.text, margin: "2px 0 0", lineHeight: 1.45 },
+  commentForm: { display: "flex", gap: 8, marginTop: 10 },
+
   detailLinks: { display: "flex", gap: 8, flexWrap: "wrap", margin: "16px 0" },
   detailLinkBtn: {
     display: "inline-flex", alignItems: "center", gap: 6,

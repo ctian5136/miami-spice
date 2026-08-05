@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Star, MapPin, ExternalLink, CalendarCheck2, X } from "lucide-react";
+import { Star, MapPin, ExternalLink, CalendarCheck2, X, Send } from "lucide-react";
 import { styles, colors } from "../styles";
 import { RESTAURANT_DETAILS } from "../data/restaurantDetails";
 import { fetchFriends, getPicks } from "../lib/social";
+import { fetchComments, addComment } from "../lib/lists";
 
-export default function DetailModal({ restaurant, user, onClose }) {
+export default function DetailModal({ restaurant, user, listId, onClose }) {
   const r = restaurant;
   const details = RESTAURANT_DETAILS[r.name];
   const [friendReviews, setFriendReviews] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [commentText, setCommentText] = useState("");
+  const [posting, setPosting] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -27,6 +31,29 @@ export default function DetailModal({ restaurant, user, onClose }) {
       cancelled = true;
     };
   }, [user, r.name]);
+
+  const loadComments = () => {
+    if (!listId) return;
+    fetchComments(listId, r.name).then(setComments);
+  };
+
+  useEffect(() => {
+    loadComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listId, r.name]);
+
+  const handlePostComment = async () => {
+    const text = commentText.trim();
+    if (!text) return;
+    setPosting(true);
+    try {
+      await addComment(listId, r.name, user, text);
+      setCommentText("");
+      loadComments();
+    } finally {
+      setPosting(false);
+    }
+  };
 
   return (
     <div style={styles.dialogOverlay} onClick={onClose}>
@@ -129,6 +156,43 @@ export default function DetailModal({ restaurant, user, onClose }) {
                   </div>
                 </div>
               ))
+            )}
+
+            {listId && (
+              <>
+                <div style={styles.detailSectionTitle}>Comments</div>
+                {comments === null ? (
+                  <p style={styles.detailEmptyNote}>Loading…</p>
+                ) : comments.length === 0 ? (
+                  <p style={styles.detailEmptyNote}>No comments yet.</p>
+                ) : (
+                  comments.map((c) => (
+                    <div key={c.id} style={styles.commentRow}>
+                      {c.authorPhoto ? (
+                        <img src={c.authorPhoto} alt="" style={styles.commentAvatar} />
+                      ) : (
+                        <div style={styles.commentAvatar} />
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <p style={styles.commentAuthor}>{c.authorName || "Someone"}</p>
+                        <p style={styles.commentText}>{c.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <div style={styles.commentForm}>
+                  <input
+                    style={styles.input}
+                    placeholder="Add a comment…"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handlePostComment()}
+                  />
+                  <button style={styles.primaryBtn} onClick={handlePostComment} disabled={posting || !commentText.trim()}>
+                    <Send size={14} strokeWidth={2.5} />
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>
