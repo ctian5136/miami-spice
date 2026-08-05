@@ -5,9 +5,10 @@ import { RESTAURANT_DETAILS } from "../data/restaurantDetails";
 import { fetchFriends, getPicks } from "../lib/social";
 import { fetchComments, addComment } from "../lib/lists";
 
-export default function DetailModal({ restaurant, user, listId, onClose }) {
+export default function DetailModal({ restaurant, user, listId, picks, onClose }) {
   const r = restaurant;
   const details = RESTAURANT_DETAILS[r.name];
+  const myPick = picks?.[r.name];
   const [friendReviews, setFriendReviews] = useState(null);
   const [comments, setComments] = useState(null);
   const [commentText, setCommentText] = useState("");
@@ -126,7 +127,37 @@ export default function DetailModal({ restaurant, user, listId, onClose }) {
           </div>
 
           <div style={styles.detailFriendsCol}>
-            <div style={{ ...styles.detailSectionTitle, marginTop: 0 }}>What your friends think:</div>
+            {myPick?.status === "eaten" && (
+              <>
+                <div style={{ ...styles.detailSectionTitle, marginTop: 0 }}>Your review:</div>
+                <div style={styles.friendReviewRow}>
+                  {user.photoURL ? (
+                    <img src={user.photoURL} alt="" style={styles.friendReviewAvatar} />
+                  ) : (
+                    <div style={styles.friendReviewAvatar} />
+                  )}
+                  <div style={{ minWidth: 0 }}>
+                    <p style={styles.friendReviewName}>{user.displayName || "You"}</p>
+                    {myPick.notes ? (
+                      <p style={{ ...styles.eatenNotes, background: colors.bg }}>{myPick.notes}</p>
+                    ) : (
+                      <p style={styles.detailEmptyNote}>Marked as eaten, no notes left.</p>
+                    )}
+                    {myPick.photos?.length > 0 && (
+                      <div style={{ ...styles.photoStrip, marginTop: 8 }}>
+                        {myPick.photos.map((p, i) => (
+                          <img key={i} src={p.url} alt="" style={styles.photoThumb} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div style={myPick?.status === "eaten" ? styles.detailSectionTitle : { ...styles.detailSectionTitle, marginTop: 0 }}>
+              What your friends think:
+            </div>
             {friendReviews === null ? (
               <p style={styles.detailEmptyNote}>Loading…</p>
             ) : friendReviews.length === 0 ? (

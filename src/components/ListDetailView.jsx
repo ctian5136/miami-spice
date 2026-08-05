@@ -73,14 +73,16 @@ export default function ListDetailView({ list, user, picks, onMarkEaten, onRemov
               <UserPlus size={14} strokeWidth={2.5} /> Invite
             </button>
           )}
-          {isOwner ? (
-            <button style={styles.removeBtn} onClick={handleDelete} title="Delete list">
-              <Trash2 size={14} strokeWidth={2.5} />
-            </button>
-          ) : (
-            <button style={styles.removeBtn} onClick={handleLeave} title="Leave Shared List">
-              <LogOut size={14} strokeWidth={2.5} />
-            </button>
+          {!list.isPersonal && (
+            isOwner ? (
+              <button style={styles.removeBtn} onClick={handleDelete} title="Delete list">
+                <Trash2 size={14} strokeWidth={2.5} />
+              </button>
+            ) : (
+              <button style={styles.removeBtn} onClick={handleLeave} title="Leave Shared List">
+                <LogOut size={14} strokeWidth={2.5} />
+              </button>
+            )
           )}
         </div>
       </div>
@@ -142,6 +144,7 @@ export default function ListDetailView({ list, user, picks, onMarkEaten, onRemov
         <DetailModal
           restaurant={detailRestaurant}
           user={user}
+          picks={picks}
           listId={list.id}
           onClose={() => setDetailRestaurant(null)}
         />

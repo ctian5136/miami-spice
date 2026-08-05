@@ -113,19 +113,23 @@ export const styles = {
   },
   posterRail: { background: colors.terracotta },
   posterMeta: {
-    background: colors.cream, padding: "64px 28px 24px",
+    background: colors.cream, padding: "28px 28px 24px",
     display: "flex", flexDirection: "column", position: "relative",
   },
+  posterMetaRow: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 },
+  posterMetaTitle: {
+    fontSize: 12, fontWeight: 700, letterSpacing: "0.4em", textTransform: "uppercase",
+    color: colors.accentDark, margin: 0, lineHeight: 1.6,
+  },
   posterProfile: {
-    position: "absolute", top: 24, right: 24, zIndex: 4,
-    width: 34, height: 34, borderRadius: 999, padding: 0, overflow: "hidden",
+    width: 34, height: 34, borderRadius: 999, padding: 0, overflow: "hidden", flexShrink: 0,
     background: colors.accentSoftBg, border: `1.5px solid ${colors.accent}`,
     display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
   },
   posterProfileImg: { width: "100%", height: "100%", objectFit: "cover" },
   posterOverlay: { position: "fixed", inset: 0, zIndex: 9, background: "transparent" },
   posterProfileMenu: {
-    position: "absolute", top: 66, right: 24, zIndex: 10, width: 208,
+    position: "absolute", top: 42, right: 0, zIndex: 10, width: 208,
     background: "#fff", border: `1px solid ${colors.border}`, borderRadius: 10,
     boxShadow: "0 10px 28px rgba(43,24,10,0.18)", overflow: "hidden",
   },
@@ -217,8 +221,10 @@ export const styles = {
   chipActive: { background: colors.accent, borderColor: colors.accent, color: "#fff" },
   selects: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 4 },
   select: {
-    padding: "9px 14px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
-    background: "#fff", color: colors.text, fontSize: 13.5, fontWeight: 600,
+    padding: "9px 40px 9px 14px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
+    background: `#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B5B4A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center`,
+    backgroundSize: "13px", appearance: "none", WebkitAppearance: "none", MozAppearance: "none",
+    color: colors.text, fontSize: 13.5, fontWeight: 600,
     cursor: "pointer", fontFamily: "inherit",
   },
 

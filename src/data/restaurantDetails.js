@@ -20,10 +20,10 @@ export const RESTAURANT_DETAILS = {
     website: "https://www.lejardinier-miami.com/",
     bookingUrl: "https://www.opentable.com/r/le-jardinier-miami",
     spiceMenu: [
-      "Pan-seared salmon with spinach orzo (lunch)",
-      "Roasted chicken, cilantro yogurt marinade (lunch)",
-      "Suckling pig porcetta, honey Dijon glaze (dinner)",
-      "Chocolate salted caramel tart (dessert)",
+      "Steelhead trout, pil pil sauce, crispy baby potatoes (lunch)",
+      "Roasted chicken breast, lemon herb sauce, chanterelle fricassee (dinner)",
+      "Wagyu picanha, chimichurri (dinner, +$25 supplement)",
+      "Strawberry éclair, crema alla fragola (dessert)",
     ],
   },
   "Stubborn Seed": {
@@ -74,9 +74,10 @@ export const RESTAURANT_DETAILS = {
   "Michael's Genuine": {
     website: "https://michaelsgenuine.com/",
     spiceMenu: [
-      "Wood-roasted oyster mushroom, dill-pickled asparagus",
-      "Whipped tuna conserva toast",
-      "Wood-roasted zucchini",
+      "Wood-roasted cobia meunière (lunch & dinner)",
+      "Onion soup croquette, caramelized onion (starter, both menus)",
+      "Short rib panini, fontina, tomato chutney (lunch entrée)",
+      "Espresso flan (dessert)",
     ],
   },
   "Cafe La Trova": {
@@ -105,9 +106,10 @@ export const RESTAURANT_DETAILS = {
     website: "https://www.mapleandash.com/miami/",
     bookingUrl: "https://www.opentable.com/r/maple-and-ash-miami",
     spiceMenu: [
-      "Bluefin tuna tartare, watermelon, white soy nikiri",
-      "Grilled summer salad, peach, manchego, basil",
-      "Fork & Knife Caesar Salad or Beef Tenderloin Tartare (starter option)",
+      "Bluefin tuna tartare, watermelon, white soy nikiri (dinner, $95 menu)",
+      "Grilled summer salad, peach, manchego, basil (dinner, $95 menu)",
+      "Filet mignon medallions, pomme purée, cipollini onion (dinner entrée)",
+      "Fire-roasted seafood tower add-on (+$25 supplement)",
     ],
   },
   "Rusty Pelican": {
@@ -131,12 +133,8 @@ export const RESTAURANT_DETAILS = {
   "DOYA": {
     website: "https://doyarestaurant.com/",
     bookingUrl: "https://www.opentable.com/r/doya-miami",
-    spiceMenu: [
-      "Haydari — garlic yogurt, mint, butter",
-      "Mastic octopus, mastika sauce, trumpet mushrooms",
-      "Wood-fired chicken thighs, sumac and onions",
-      "Pide with truffle and kasseri cheese",
-    ],
+    // 2026 Miami Spice is a chef-hosted family-style "Reserve" dinner, not a
+    // choose-your-own prix-fixe — no confirmed discrete dish list to show.
   },
   "Lido at The Surf Club": {
     website: "https://www.lidoatthesurfclub.com/",
@@ -159,10 +157,10 @@ export const RESTAURANT_DETAILS = {
     website: "https://uchiko.uchirestaurants.com/",
     bookingUrl: "https://resy.com/cities/miami-fl/venues/uchiko-miami-beach",
     spiceMenu: [
-      "Spicy ponzu sake nigiri",
-      "Japanese pumpkin tempura",
-      "Sesame ponzu ceviche temaki",
-      "Chicken satay salad",
+      "Ceviche temaki, sake & bincho nigiri (starters)",
+      "Tempura kabocha, chicken satay (entrées)",
+      "Take nabe (entrée)",
+      "Seasonal tart or sundae (dessert)",
     ],
   },
   "Leonardo": {
@@ -189,9 +187,9 @@ export const RESTAURANT_DETAILS = {
     website: "https://www.zumarestaurant.com/en/miami",
     bookingUrl: "https://www.opentable.com/zuma-japanese-restaurant-miami",
     spiceMenu: [
-      "Sliced seabass sashimi or tuna tataki",
-      "Avocado and asparagus salad",
-      "Chicken karaage",
+      "Prawn and black cod gyoza (starter)",
+      "Salmon teriyaki, pickled cucumber (entrée)",
+      "Chicken karaage, chili-lemon dressing (entrée)",
       "Maple Cheesecake — Miami debut (dessert)",
     ],
   },

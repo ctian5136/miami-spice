@@ -82,7 +82,10 @@ export default function MyListsView({
             <div style={styles.listsGrid}>
               {myLists.map((l) => (
                 <button key={l.id} style={styles.listCard} onClick={() => setOpenListId(l.id)}>
-                  <h3 style={styles.listCardName}>{l.name}</h3>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <h3 style={styles.listCardName}>{l.name}</h3>
+                    {l.isPersonal && <span style={{ ...styles.badge, ...styles.badgeWant }}>Personal</span>}
+                  </div>
                   <span style={styles.listCardMeta}>
                     {counts[l.id] ?? "…"} spot{counts[l.id] === 1 ? "" : "s"}
                     {l.memberIds.length > 1 ? ` · ${l.memberIds.length} people` : ""}
@@ -132,7 +135,7 @@ export default function MyListsView({
       )}
 
       {detailRestaurant && (
-        <DetailModal restaurant={detailRestaurant} user={user} onClose={() => setDetailRestaurant(null)} />
+        <DetailModal restaurant={detailRestaurant} user={user} picks={picks} onClose={() => setDetailRestaurant(null)} />
       )}
     </>
   );

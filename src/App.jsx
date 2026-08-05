@@ -47,18 +47,19 @@ export default function App() {
       const [fetchedPicks, lists] = await Promise.all([getPicks(user.uid), fetchMyLists(user.uid)]);
       setPicks(fetchedPicks);
 
-      // One-time migration: fold any legacy "want to eat" picks into a
-      // default list, so nothing looks lost after the multi-list rework.
+      // Every user gets a personal "Want to Eat" list that can't be deleted
+      // or shared. Folds in any legacy "want" picks from before the
+      // multi-list rework, so nothing looks lost.
       if (lists.length === 0) {
         const wantNames = Object.entries(fetchedPicks)
           .filter(([, p]) => p.status === "want")
           .map(([name]) => name);
+        const listId = await createList(user, "Want to Eat", { isPersonal: true });
         if (wantNames.length > 0) {
-          const listId = await createList(user, "Want to Eat", { isPersonal: true });
           await Promise.all(wantNames.map((name) => addItemToList(listId, name, user)));
-          setMyLists(await fetchMyLists(user.uid));
-          return;
         }
+        setMyLists(await fetchMyLists(user.uid));
+        return;
       }
 
       // One-time backfill: the default "Want to Eat" list predates the
@@ -105,6 +106,8 @@ export default function App() {
   };
 
   const eatenCount = Object.values(picks).filter((p) => p.status === "eaten").length;
+  const firstName = user?.displayName?.split(" ")[0];
+  const trackerNameLine = firstName ? `${firstName}'s` : "Your";
 
   if (!authReady) {
     return (
@@ -195,14 +198,22 @@ export default function App() {
         </div>
         <div style={styles.posterRail} className="poster-rail" />
         <div style={styles.posterMeta}>
-          <button style={styles.posterProfile} onClick={() => setProfileOpen((o) => !o)}>
-            {user.photoURL ? (
-              <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
-            ) : (
-              <User size={16} color={colors.accent} strokeWidth={2.5} />
-            )}
-          </button>
-          {profileMenu}
+          <div style={styles.posterMetaRow}>
+            <div style={styles.posterMetaTitle}>
+              <div>{trackerNameLine}</div>
+              <div>Spice Tracker</div>
+            </div>
+            <div style={{ position: "relative" }}>
+              <button style={styles.posterProfile} onClick={() => setProfileOpen((o) => !o)}>
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
+                ) : (
+                  <User size={16} color={colors.accent} strokeWidth={2.5} />
+                )}
+              </button>
+              {profileMenu}
+            </div>
+          </div>
 
           <div style={styles.posterRule} />
           <div style={styles.posterStats}>

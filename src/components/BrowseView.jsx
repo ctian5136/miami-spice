@@ -81,7 +81,7 @@ export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists
       </footer>
 
       {detailRestaurant && (
-        <DetailModal restaurant={detailRestaurant} user={user} onClose={() => setDetailRestaurant(null)} />
+        <DetailModal restaurant={detailRestaurant} user={user} picks={picks} onClose={() => setDetailRestaurant(null)} />
       )}
 
       {pickerRestaurant && (
