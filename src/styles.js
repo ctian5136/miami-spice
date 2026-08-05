@@ -139,15 +139,45 @@ export const styles = {
     marginTop: 3, fontSize: 11, letterSpacing: "0.03em", textTransform: "uppercase", color: colors.accentDark,
   },
 
-  tabs: { display: "flex", gap: 6, flexWrap: "wrap", marginTop: "auto" },
-  tabButton: {
-    fontSize: 10.5, textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 700,
-    border: `1px solid ${colors.accent}`, padding: "6px 10px", color: colors.accentDark,
-    borderRadius: 4, background: "none", cursor: "pointer", fontFamily: "inherit",
-  },
-  tabButtonActive: { background: colors.accent, color: colors.cream, borderColor: colors.accent },
+  appShell: { maxWidth: 1280, margin: "0 auto" },
+  appBody: { display: "flex", alignItems: "flex-start" },
+  mainCol: { flex: 1, minWidth: 0 },
 
-  controls: { maxWidth: 1080, margin: "0 auto", padding: "22px 20px 0" },
+  sidebarPanel: {
+    width: 216, flexShrink: 0, background: colors.cream, padding: "20px 12px 32px",
+    borderRight: `1px solid ${colors.border}`, position: "sticky", alignSelf: "flex-start",
+    transition: "top 0.2s ease",
+  },
+  navRow: {
+    display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 8,
+    marginBottom: 3, fontSize: 13, fontWeight: 600, color: "#8B6F52",
+    borderLeft: "3px solid transparent", cursor: "pointer", background: "none", border: "none",
+    width: "100%", textAlign: "left", fontFamily: "inherit",
+  },
+  navRowActive: { background: "rgba(192,90,18,0.14)", color: colors.accentDark, borderLeftColor: colors.accent },
+  navCountBadge: {
+    marginLeft: "auto", fontSize: 10, fontWeight: 700, background: colors.terracotta,
+    color: colors.cream, borderRadius: 999, padding: "1px 6px",
+  },
+  sublist: { margin: "2px 0 8px 33px", display: "flex", flexDirection: "column", gap: 2 },
+  sublistRow: {
+    fontSize: 11.5, color: "#A9773E", padding: "5px 8px", borderRadius: 6, cursor: "pointer",
+    background: "none", border: "none", textAlign: "left", fontFamily: "inherit", display: "block", width: "100%",
+  },
+  sublistRowActive: { background: "rgba(192,90,18,0.08)", color: colors.accentDark, fontWeight: 700 },
+  navDivider: { height: 1, background: colors.border, margin: "12px 4px" },
+
+  compactBar: {
+    position: "fixed", top: 0, left: 0, right: 0, zIndex: 30,
+    background: colors.accent, padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between",
+    transform: "translateY(-100%)", opacity: 0, transition: "transform 0.25s ease, opacity 0.25s ease",
+    pointerEvents: "none",
+  },
+  compactBarVisible: { transform: "translateY(0)", opacity: 1, pointerEvents: "auto" },
+  compactWord: { fontFamily: "-apple-system, system-ui, sans-serif", fontWeight: 900, fontSize: 16, color: colors.cream, letterSpacing: "-0.01em" },
+  compactWordKicker: { opacity: 0.7, fontWeight: 700, fontSize: 11, marginRight: 6, textTransform: "uppercase", letterSpacing: "0.2em" },
+
+  controls: { padding: "22px 24px 0" },
   chips: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 },
   chip: {
     display: "inline-flex", alignItems: "center", gap: 6,
@@ -164,8 +194,8 @@ export const styles = {
   },
 
   grid: {
-    maxWidth: 1080, margin: "22px auto 0", padding: "0 20px",
-    display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16,
+    margin: "22px 0 0", padding: "0 24px",
+    display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16,
   },
   card: {
     textAlign: "left", border: `1.5px solid ${colors.border}`,
@@ -225,7 +255,7 @@ export const styles = {
     fontSize: 12, lineHeight: 1.6, color: "#A88968", textAlign: "center",
   },
 
-  section: { maxWidth: 1080, margin: "0 auto", padding: "28px 20px 0" },
+  section: { padding: "28px 24px 0" },
   sectionTitle: { fontFamily: "'Georgia', serif", fontSize: 24, fontWeight: 700, margin: "0 0 4px", color: colors.text },
   sectionSub: { fontSize: 13.5, color: colors.textSoft, margin: "0 0 18px" },
 

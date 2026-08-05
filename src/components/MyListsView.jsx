@@ -18,9 +18,13 @@ export default function MyListsView({
   user,
   myLists = [],
   onListsChanged = noop,
+  openListId: openListIdProp,
+  onOpenList: onOpenListProp,
 }) {
   const [detailRestaurant, setDetailRestaurant] = useState(null);
-  const [openListId, setOpenListId] = useState(null);
+  const [internalOpenListId, setInternalOpenListId] = useState(null);
+  const openListId = openListIdProp !== undefined ? openListIdProp : internalOpenListId;
+  const setOpenListId = onOpenListProp || setInternalOpenListId;
   const [counts, setCounts] = useState({});
   const [newListName, setNewListName] = useState("");
   const [creating, setCreating] = useState(false);

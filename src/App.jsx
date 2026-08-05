@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LogOut, User } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import { styles, keyframes, colors } from "./styles";
-import { upsertProfile, getPicks, saveEaten, removePick } from "./lib/social";
+import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests } from "./lib/social";
 import { fetchMyLists, createList, addItemToList } from "./lib/lists";
+import Sidebar from "./components/Sidebar";
 import BrowseView from "./components/BrowseView";
 import MyListsView from "./components/MyListsView";
 import FriendsView from "./components/FriendsView";
 import EatenDialog from "./components/EatenDialog";
-
-const TABS = [
-  { id: "browse", label: "Browse" },
-  { id: "mylists", label: "My Lists" },
-  { id: "friends", label: "Friends" },
-];
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -22,8 +17,12 @@ export default function App() {
   const [picks, setPicks] = useState({});
   const [myLists, setMyLists] = useState([]);
   const [tab, setTab] = useState("browse");
+  const [openListId, setOpenListId] = useState(null);
+  const [incomingCount, setIncomingCount] = useState(0);
   const [eatenDialogFor, setEatenDialogFor] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [compactVisible, setCompactVisible] = useState(false);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
@@ -63,6 +62,20 @@ export default function App() {
       }
       setMyLists(lists);
     })();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchIncomingRequests(user.uid).then((reqs) => setIncomingCount(reqs.length));
+  }, [user, tab]);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => setCompactVisible(!entry.isIntersecting), {
+      rootMargin: "-1px 0px 0px 0px",
+    });
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
   }, [user]);
 
   const login = () => signInWithPopup(auth, googleProvider);
@@ -110,9 +123,47 @@ export default function App() {
     );
   }
 
+  const profileMenu = profileOpen && (
+    <>
+      <div style={styles.posterOverlay} onClick={() => setProfileOpen(false)} />
+      <div style={styles.posterProfileMenu}>
+        <div style={styles.profileWho}>
+          Signed in as
+          <span style={styles.profileWhoName}>{user.displayName}</span>
+        </div>
+        <button
+          style={styles.profileMenuBtn}
+          onClick={() => {
+            setProfileOpen(false);
+            logout();
+          }}
+        >
+          <LogOut size={13} strokeWidth={2.5} style={{ marginRight: 6, verticalAlign: -2 }} />
+          Sign out
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <div style={styles.page}>
       <style>{keyframes}</style>
+
+      <div style={{ ...styles.compactBar, ...(compactVisible ? styles.compactBarVisible : {}) }}>
+        <div style={styles.compactWord}>
+          <span style={styles.compactWordKicker}>Miami</span>Spice
+        </div>
+        <div style={{ position: "relative" }}>
+          <button style={styles.posterProfile} onClick={() => setProfileOpen((o) => !o)}>
+            {user.photoURL ? (
+              <img src={user.photoURL} alt={user.displayName || "User"} style={styles.posterProfileImg} />
+            ) : (
+              <User size={16} color={colors.accent} strokeWidth={2.5} />
+            )}
+          </button>
+          {profileMenu}
+        </div>
+      </div>
 
       <header style={styles.posterGrid} className="poster-grid">
         <div style={styles.posterMain} className="poster-main">
@@ -129,27 +180,7 @@ export default function App() {
               <User size={16} color={colors.accent} strokeWidth={2.5} />
             )}
           </button>
-          {profileOpen && (
-            <>
-              <div style={styles.posterOverlay} onClick={() => setProfileOpen(false)} />
-              <div style={styles.posterProfileMenu}>
-                <div style={styles.profileWho}>
-                  Signed in as
-                  <span style={styles.profileWhoName}>{user.displayName}</span>
-                </div>
-                <button
-                  style={styles.profileMenuBtn}
-                  onClick={() => {
-                    setProfileOpen(false);
-                    logout();
-                  }}
-                >
-                  <LogOut size={13} strokeWidth={2.5} style={{ marginRight: 6, verticalAlign: -2 }} />
-                  Sign out
-                </button>
-              </div>
-            </>
-          )}
+          {profileMenu}
 
           <div style={styles.posterRule} />
           <div style={styles.posterStats}>
@@ -162,44 +193,51 @@ export default function App() {
               <div style={styles.statLabel}>Eaten</div>
             </div>
           </div>
-
-          <nav style={styles.tabs}>
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                style={{ ...styles.tabButton, ...(tab === t.id ? styles.tabButtonActive : {}) }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </nav>
         </div>
       </header>
+      <div ref={sentinelRef} />
 
-      {tab === "browse" && (
-        <BrowseView
-          picks={picks}
-          onMarkEaten={handleMarkEaten}
-          onRemove={handleRemove}
-          user={user}
-          myLists={myLists}
-          onListsChanged={refreshLists}
-        />
-      )}
+      <div style={styles.appShell}>
+        <div style={styles.appBody}>
+          <Sidebar
+            tab={tab}
+            setTab={setTab}
+            myLists={myLists}
+            openListId={openListId}
+            onOpenList={setOpenListId}
+            incomingCount={incomingCount}
+            top={compactVisible ? 68 : 16}
+          />
 
-      {tab === "mylists" && (
-        <MyListsView
-          picks={picks}
-          onMarkEaten={handleMarkEaten}
-          onRemove={handleRemove}
-          user={user}
-          myLists={myLists}
-          onListsChanged={refreshLists}
-        />
-      )}
+          <div style={styles.mainCol}>
+            {tab === "browse" && (
+              <BrowseView
+                picks={picks}
+                onMarkEaten={handleMarkEaten}
+                onRemove={handleRemove}
+                user={user}
+                myLists={myLists}
+                onListsChanged={refreshLists}
+              />
+            )}
 
-      {tab === "friends" && <FriendsView user={user} />}
+            {tab === "mylists" && (
+              <MyListsView
+                picks={picks}
+                onMarkEaten={handleMarkEaten}
+                onRemove={handleRemove}
+                user={user}
+                myLists={myLists}
+                onListsChanged={refreshLists}
+                openListId={openListId}
+                onOpenList={setOpenListId}
+              />
+            )}
+
+            {tab === "friends" && <FriendsView user={user} />}
+          </div>
+        </div>
+      </div>
 
       {eatenDialogFor && (
         <EatenDialog
