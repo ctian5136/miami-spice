@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Check, Users } from "lucide-react";
 import { styles } from "../styles";
 import { createList, addItemToList, removeItemFromList, fetchListMembershipForRestaurant } from "../lib/lists";
 
 export default function ListPicker({ restaurantName, user, myLists, onClose, onListsChanged }) {
   const [membership, setMembership] = useState(null);
+  const [showCreate, setShowCreate] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [creating, setCreating] = useState(false);
 
@@ -38,6 +39,7 @@ export default function ListPicker({ restaurantName, user, myLists, onClose, onL
       const listId = await createList(user, name);
       await addItemToList(listId, restaurantName, user);
       setNewListName("");
+      setShowCreate(false);
       await onListsChanged();
       setMembership((prev) => new Set([...(prev || []), listId]));
     } finally {
@@ -49,12 +51,14 @@ export default function ListPicker({ restaurantName, user, myLists, onClose, onL
     <div style={styles.dialogOverlay} onClick={onClose}>
       <div style={styles.dialogBox} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-          <h3 style={styles.dialogTitle}>Add to a list</h3>
+          <div>
+            <h3 style={styles.dialogTitle}>Save {restaurantName}</h3>
+            <p style={styles.dialogSub}>Choose one or more lists</p>
+          </div>
           <button onClick={onClose} style={styles.removeBtn}>
             <X size={14} strokeWidth={2.5} />
           </button>
         </div>
-        <p style={styles.dialogSub}>{restaurantName}</p>
 
         {membership === null ? (
           <p style={styles.detailEmptyNote}>Loading…</p>
@@ -67,30 +71,58 @@ export default function ListPicker({ restaurantName, user, myLists, onClose, onL
               <div
                 key={list.id}
                 style={{ ...styles.listPickerRow, ...(checked ? styles.listPickerRowChecked : {}) }}
-                onClick={() => toggle(list.id)}
               >
-                <input type="checkbox" checked={checked} onChange={() => toggle(list.id)} style={styles.listPickerCheckbox} />
-                <span style={styles.listPickerName}>{list.name}</span>
-                {list.memberIds.length > 1 && (
-                  <span style={styles.listPickerMeta}>{list.memberIds.length} people</span>
-                )}
+                <div>
+                  <p style={styles.listPickerName}>{list.name}</p>
+                  {list.memberIds.length > 1 && (
+                    <div style={styles.listPickerRowMeta}>
+                      <Users size={12} strokeWidth={2.5} />
+                      Shared with {list.memberIds.length} people
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => toggle(list.id)}
+                  style={{ ...styles.listPickerAddBtn, ...(checked ? styles.listPickerAddedBtn : {}) }}
+                >
+                  {checked ? (
+                    <>
+                      <Check size={14} strokeWidth={2.5} /> Added
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={14} strokeWidth={2.5} /> Add
+                    </>
+                  )}
+                </button>
               </div>
             );
           })
         )}
 
-        <div style={styles.newListRow}>
-          <input
-            style={styles.input}
-            placeholder="New list name"
-            value={newListName}
-            onChange={(e) => setNewListName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          />
-          <button style={styles.primaryBtn} onClick={handleCreate} disabled={creating || !newListName.trim()}>
-            <Plus size={14} strokeWidth={2.5} />
+        {showCreate ? (
+          <div style={styles.newListRow}>
+            <input
+              style={styles.input}
+              placeholder="New list name"
+              value={newListName}
+              onChange={(e) => setNewListName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+              autoFocus
+            />
+            <button style={styles.primaryBtn} onClick={handleCreate} disabled={creating || !newListName.trim()}>
+              <Plus size={14} strokeWidth={2.5} />
+            </button>
+          </div>
+        ) : (
+          <button style={styles.createListLink} onClick={() => setShowCreate(true)}>
+            <Plus size={14} strokeWidth={2.5} /> Create a new list
           </button>
-        </div>
+        )}
+
+        <button style={{ ...styles.primaryBtn, ...styles.dialogDoneBtn }} onClick={onClose}>
+          Done
+        </button>
       </div>
     </div>
   );

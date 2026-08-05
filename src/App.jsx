@@ -4,7 +4,7 @@ import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import { styles, keyframes, colors, COMPACT_BAR_HEIGHT } from "./styles";
 import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests } from "./lib/social";
-import { fetchMyLists, createList, addItemToList } from "./lib/lists";
+import { fetchMyLists, createList, addItemToList, setListPersonal } from "./lib/lists";
 import Sidebar from "./components/Sidebar";
 import BrowseView from "./components/BrowseView";
 import MyListsView from "./components/MyListsView";
@@ -54,12 +54,22 @@ export default function App() {
           .filter(([, p]) => p.status === "want")
           .map(([name]) => name);
         if (wantNames.length > 0) {
-          const listId = await createList(user, "Want to Eat");
+          const listId = await createList(user, "Want to Eat", { isPersonal: true });
           await Promise.all(wantNames.map((name) => addItemToList(listId, name, user)));
           setMyLists(await fetchMyLists(user.uid));
           return;
         }
       }
+
+      // One-time backfill: the default "Want to Eat" list predates the
+      // personal/shared distinction, so mark it personal if it was never tagged.
+      const legacyWantList = lists.find((l) => l.name === "Want to Eat" && l.ownerId === user.uid && !l.isPersonal);
+      if (legacyWantList) {
+        await setListPersonal(legacyWantList.id, true);
+        setMyLists(await fetchMyLists(user.uid));
+        return;
+      }
+
       setMyLists(lists);
     })();
   }, [user]);

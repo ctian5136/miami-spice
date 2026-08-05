@@ -5,16 +5,21 @@ import {
 import { db } from "../firebase";
 import { getProfile } from "./social";
 
-export async function createList(user, name) {
+export async function createList(user, name, { isPersonal = false } = {}) {
   const ref = doc(collection(db, "lists"));
   await setDoc(ref, {
     name,
     ownerId: user.uid,
     ownerName: user.displayName || "",
     memberIds: [user.uid],
+    isPersonal,
     createdAt: Date.now(),
   });
   return ref.id;
+}
+
+export async function setListPersonal(listId, isPersonal) {
+  await updateDoc(doc(db, "lists", listId), { isPersonal });
 }
 
 export async function fetchMyLists(uid) {
@@ -40,6 +45,12 @@ export async function inviteToList(listId, uidToAdd) {
 }
 
 export async function leaveList(listId, uid) {
+  await updateDoc(doc(db, "lists", listId), { memberIds: arrayRemove(uid) });
+}
+
+// Same underlying op as leaveList, distinguished for the owner-removes-
+// someone-else call sites vs. a member leaving on their own.
+export async function removeMember(listId, uid) {
   await updateDoc(doc(db, "lists", listId), { memberIds: arrayRemove(uid) });
 }
 

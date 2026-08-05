@@ -333,13 +333,30 @@ export const styles = {
   errorText: { fontSize: 12.5, color: "#A9423F", margin: "8px 0 0" },
 
   listPickerRow: {
-    display: "flex", alignItems: "center", gap: 10, padding: "10px 12px",
-    borderRadius: 10, border: `1.5px solid ${colors.border}`, marginBottom: 8, cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "14px 16px",
+    borderRadius: 16, border: `1.5px solid ${colors.border}`, marginBottom: 10, background: colors.cardBg,
   },
-  listPickerRowChecked: { borderColor: colors.accent, background: colors.accentSoftBg },
-  listPickerCheckbox: { width: 16, height: 16, accentColor: colors.accent, flexShrink: 0 },
-  listPickerName: { flex: 1, fontSize: 13.5, fontWeight: 600, color: colors.text, minWidth: 0 },
+  listPickerRowChecked: { borderColor: colors.eaten, background: colors.eatenSoftBg },
+  listPickerName: { fontFamily: "'Georgia', serif", fontSize: 18, fontWeight: 700, color: colors.text, margin: 0 },
+  listPickerRowMeta: {
+    display: "flex", alignItems: "center", gap: 5, fontSize: 12.5, color: colors.textSoft, marginTop: 3,
+  },
   listPickerMeta: { fontSize: 11.5, color: colors.textSoft },
+  listPickerAddBtn: {
+    display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0,
+    padding: "9px 16px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
+    background: "#fff", color: colors.textSoft, fontSize: 13, fontWeight: 700,
+    cursor: "pointer", fontFamily: "inherit",
+  },
+  listPickerAddedBtn: {
+    borderColor: colors.eaten, background: colors.eatenSoftBg, color: colors.eatenDark,
+  },
+  createListLink: {
+    display: "inline-flex", alignItems: "center", gap: 6, marginTop: 6,
+    background: "none", border: "none", padding: 0, color: colors.accent,
+    fontSize: 13.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+  },
+  dialogDoneBtn: { width: "100%", padding: "13px 20px", borderRadius: 12, fontSize: 14.5, marginTop: 18 },
   newListRow: { display: "flex", gap: 8, marginTop: 14 },
 
   listsGrid: {
@@ -402,4 +419,16 @@ export const styles = {
   personName: { fontSize: 14.5, fontWeight: 700, color: colors.text, margin: 0 },
   personMeta: { fontSize: 12, color: colors.textSoft, margin: "2px 0 0" },
   personActions: { display: "flex", gap: 8, flexShrink: 0 },
+
+  inviteBtn: {
+    display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0,
+    padding: "8px 14px", borderRadius: 10, border: "none", background: colors.accent,
+    color: "#fff", fontSize: 12.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+  },
+  onListLabel: { fontSize: 12.5, fontWeight: 600, color: colors.textSoft, flexShrink: 0 },
+  searchInputWrap: { position: "relative", marginBottom: 18 },
+  searchInputIcon: {
+    position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
+    color: colors.textSoft, pointerEvents: "none", display: "flex",
+  },
 };
