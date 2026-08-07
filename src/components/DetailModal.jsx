@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Star, MapPin, ExternalLink, CalendarCheck2, X, Send } from "lucide-react";
+import { MapPin, Phone, ExternalLink, CalendarCheck2, Navigation, X, Send } from "lucide-react";
 import { styles, colors } from "../styles";
 import { RESTAURANT_DETAILS } from "../data/restaurantDetails";
+import { PLACES_DATA } from "../data/placesData";
+import MichelinStar from "./MichelinStar";
 import { fetchFriends, getPicks } from "../lib/social";
 import { fetchComments, addComment } from "../lib/lists";
 
-export default function DetailModal({ restaurant, user, listId, picks, onClose }) {
+const REVIEW_TRUNCATE_LENGTH = 240;
+
+function truncate(text, max) {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max).trimEnd()}…`;
+}
+
+export default function DetailModal({ restaurant, user, listId, picks, onClose, inline = false }) {
   const r = restaurant;
   const details = RESTAURANT_DETAILS[r.name];
+  const place = PLACES_DATA[r.name];
   const myPick = picks?.[r.name];
   const [friendReviews, setFriendReviews] = useState(null);
   const [comments, setComments] = useState(null);
@@ -56,9 +66,8 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
     }
   };
 
-  return (
-    <div style={styles.dialogOverlay} onClick={onClose}>
-      <div style={styles.dialogBoxWide} onClick={(e) => e.stopPropagation()}>
+  const content = (
+    <>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
           <h3 style={styles.dialogTitle}>{r.name}</h3>
           <button onClick={onClose} style={styles.removeBtn}>
@@ -71,7 +80,7 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
             {r.stars > 0 && (
               <div style={styles.starRow}>
                 {Array.from({ length: r.stars }).map((_, i) => (
-                  <Star key={i} size={14} fill={colors.accent} color={colors.accent} strokeWidth={0} />
+                  <MichelinStar key={i} size={14} />
                 ))}
               </div>
             )}
@@ -79,7 +88,25 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
               <span style={styles.metaHood}><MapPin size={11} strokeWidth={2.5} />{r.hood}</span>
               <span style={styles.metaDot}>·</span>
               <span>{r.cuisine}</span>
+              {place?.rating && (
+                <>
+                  <span style={styles.metaDot}>·</span>
+                  <span>★ {place.rating} ({place.userRatingsTotal})</span>
+                </>
+              )}
             </p>
+
+            {place?.address && (
+              <p style={styles.placeAddress}>
+                <MapPin size={11} strokeWidth={2.5} /> {place.address}
+                {place.phone && (
+                  <>
+                    <span style={styles.metaDot}>·</span>
+                    <Phone size={11} strokeWidth={2.5} /> {place.phone}
+                  </>
+                )}
+              </p>
+            )}
 
             <p style={{ ...styles.cardNote, margin: "12px 0" }}>{r.note}</p>
 
@@ -89,6 +116,11 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
             </div>
 
             <div style={styles.detailLinks}>
+              {place?.mapsUrl && (
+                <a href={place.mapsUrl} target="_blank" rel="noreferrer" style={styles.detailLinkBtn}>
+                  <Navigation size={13} strokeWidth={2.5} /> Get directions
+                </a>
+              )}
               {details?.website ? (
                 <a href={details.website} target="_blank" rel="noreferrer" style={styles.detailLinkBtn}>
                   <ExternalLink size={13} strokeWidth={2.5} /> Website
@@ -111,6 +143,22 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
               )}
             </div>
 
+            {place?.openingHours && (
+              <>
+                <div style={styles.detailSectionTitle}>Hours</div>
+                <ul style={styles.hoursList}>
+                  {place.openingHours.map((line, i) => {
+                    const [day, ...rest] = line.split(": ");
+                    return (
+                      <li key={i} style={styles.hoursItem}>
+                        <span style={styles.hoursDay}>{day}</span> {rest.join(": ")}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
+
             <div style={styles.detailSectionTitle}>Spice menu highlights</div>
             {details?.spiceMenu?.length > 0 ? (
               <ul style={styles.spiceMenuList}>
@@ -126,7 +174,7 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
             )}
           </div>
 
-          <div style={styles.detailFriendsCol}>
+          <div style={inline ? { ...styles.detailFriendsCol, borderLeft: "none", paddingLeft: 0 } : styles.detailFriendsCol}>
             {myPick?.status === "eaten" && (
               <>
                 <div style={{ ...styles.detailSectionTitle, marginTop: 0 }}>Your review:</div>
@@ -189,6 +237,31 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
               ))
             )}
 
+            {place?.reviews?.length > 0 && (
+              <>
+                <div style={styles.detailSectionTitle}>Reviews from Google</div>
+                {place.reviews.map((rv, i) => (
+                  <div key={i} style={styles.friendReviewRow}>
+                    {rv.authorPhoto ? (
+                      <img src={rv.authorPhoto} alt="" style={styles.friendReviewAvatar} referrerPolicy="no-referrer" />
+                    ) : (
+                      <div style={styles.friendReviewAvatar} />
+                    )}
+                    <div style={{ minWidth: 0 }}>
+                      <p style={styles.friendReviewName}>{rv.author}</p>
+                      <p style={styles.googleReviewMeta}>
+                        {"★".repeat(rv.rating)}
+                        {"☆".repeat(5 - rv.rating)} · {rv.relativeTime}
+                      </p>
+                      <p style={{ ...styles.eatenNotes, background: colors.bg }}>
+                        {truncate(rv.text, REVIEW_TRUNCATE_LENGTH)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+
             {listId && (
               <>
                 <div style={styles.detailSectionTitle}>Comments</div>
@@ -227,6 +300,15 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose }
             )}
           </div>
         </div>
+    </>
+  );
+
+  if (inline) return content;
+
+  return (
+    <div style={styles.dialogOverlay} onClick={onClose}>
+      <div style={styles.dialogBoxWide} onClick={(e) => e.stopPropagation()}>
+        {content}
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import React from "react";
-import { Star, MapPin, ListPlus, UtensilsCrossed, X } from "lucide-react";
-import { styles, colors } from "../styles";
+import { MapPin, ListPlus, UtensilsCrossed, X } from "lucide-react";
+import { styles } from "../styles";
+import { PLACES_DATA } from "../data/placesData";
+import MichelinStar from "./MichelinStar";
 
 export default function RestaurantCard({
   restaurant,
@@ -13,6 +15,7 @@ export default function RestaurantCard({
 }) {
   const r = restaurant;
   const status = pick?.status;
+  const place = PLACES_DATA[r.name];
 
   const cardStyle = {
     ...styles.card,
@@ -27,7 +30,7 @@ export default function RestaurantCard({
           {r.stars > 0 && (
             <div style={styles.starRow}>
               {Array.from({ length: r.stars }).map((_, i) => (
-                <Star key={i} size={14} fill={colors.accent} color={colors.accent} strokeWidth={0} />
+                <MichelinStar key={i} size={14} />
               ))}
             </div>
           )}
@@ -36,6 +39,12 @@ export default function RestaurantCard({
             <span style={styles.metaHood}><MapPin size={11} strokeWidth={2.5} />{r.hood}</span>
             <span style={styles.metaDot}>·</span>
             <span>{r.cuisine}</span>
+            {place?.rating && (
+              <>
+                <span style={styles.metaDot}>·</span>
+                <span>★ {place.rating} ({place.userRatingsTotal})</span>
+              </>
+            )}
           </div>
         </div>
         <span style={{ ...styles.badge, ...styles.badgeEaten, ...(status === "eaten" ? {} : styles.badgeHidden) }}>

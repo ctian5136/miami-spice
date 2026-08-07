@@ -1,6 +1,6 @@
 import React from "react";
 import { colors, styles } from "../styles";
-import { SearchIcon, ListIcon, FriendsIcon } from "./Sidebar";
+import { SearchIcon, MapIcon, ListIcon, FriendsIcon } from "./Sidebar";
 
 export default function MobileNav({ tab, setTab, onOpenList, incomingCount }) {
   const go = (nextTab) => {
@@ -13,6 +13,10 @@ export default function MobileNav({ tab, setTab, onOpenList, incomingCount }) {
       <button style={styles.mobileNavBtn} onClick={() => go("browse")}>
         <SearchIcon color={tab === "browse" ? colors.accent : colors.textSoft} />
         <span style={{ ...styles.mobileNavLabel, ...(tab === "browse" ? styles.mobileNavLabelActive : {}) }}>Browse</span>
+      </button>
+      <button style={styles.mobileNavBtn} onClick={() => go("map")}>
+        <MapIcon color={tab === "map" ? colors.accent : colors.textSoft} />
+        <span style={{ ...styles.mobileNavLabel, ...(tab === "map" ? styles.mobileNavLabelActive : {}) }}>Map</span>
       </button>
       <button style={styles.mobileNavBtn} onClick={() => go("mylists")}>
         <ListIcon color={tab === "mylists" ? colors.accent : colors.textSoft} />

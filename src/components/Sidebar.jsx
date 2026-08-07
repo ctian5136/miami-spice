@@ -9,6 +9,15 @@ export function SearchIcon({ color = colors.text }) {
     </svg>
   );
 }
+export function MapIcon({ color = colors.text }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
+      <path d="M9 18l-5.5 2V6L9 4l6 2 5.5-2v14L15 20l-6-2z" />
+      <path d="M9 4v14" />
+      <path d="M15 6v14" />
+    </svg>
+  );
+}
 export function ListIcon({ color = colors.text }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" width="15" height="15">
@@ -41,6 +50,14 @@ export default function Sidebar({ tab, setTab, myLists, openListId, onOpenList, 
       >
         <SearchIcon color={tab === "browse" ? colors.cream : colors.text} />
         Browse
+      </button>
+
+      <button
+        style={{ ...styles.navRow, ...(tab === "map" ? styles.navRowActive : {}) }}
+        onClick={() => setTab("map")}
+      >
+        <MapIcon color={tab === "map" ? colors.cream : colors.text} />
+        Map
       </button>
 
       <button

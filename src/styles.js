@@ -217,7 +217,7 @@ export const styles = {
 
   controls: {
     padding: "18px 24px 14px", position: "sticky", zIndex: 20,
-    background: colors.bg,
+    background: colors.bg, flex: "1 1 auto", minWidth: 0,
   },
   mobileNav: {
     display: "none", position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 30,
@@ -263,6 +263,38 @@ export const styles = {
   grid: {
     margin: "22px 0 0", padding: "0 24px",
     display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 16,
+  },
+  mapListToggleBtn: {
+    display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0,
+    padding: "9px 16px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
+    background: "#fff", color: colors.text, fontSize: 13.5, fontWeight: 700,
+    cursor: "pointer", fontFamily: "inherit",
+  },
+  mapSplitRow: { display: "flex", alignItems: "stretch", gap: 16, margin: "22px 24px 0" },
+  mapContainer: {
+    flex: "1 1 100%", minWidth: 0, borderRadius: 18, overflow: "hidden",
+    border: `1.5px solid ${colors.border}`, boxShadow: "0 6px 20px rgba(59,46,34,0.08)",
+    transition: "flex-basis 0.2s ease",
+  },
+  mapContainerNarrow: { flex: "1 1 58%" },
+  mapCanvas: { width: "100%", height: "70vh", minHeight: 420, background: colors.border },
+  mapPanel: {
+    flex: "1 1 38%", maxWidth: 420, minWidth: 300, height: "70vh", minHeight: 420,
+    overflowY: "auto", background: colors.cardBg, borderRadius: 18,
+    border: `1.5px solid ${colors.border}`, boxShadow: "0 6px 20px rgba(59,46,34,0.08)", padding: 20,
+  },
+  mapPanelListHeader: { fontSize: 12.5, fontWeight: 700, color: colors.textSoft, margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.05em" },
+  mapListRow: {
+    display: "block", width: "100%", textAlign: "left", padding: "12px 14px", marginBottom: 8,
+    borderRadius: 12, border: `1.5px solid ${colors.border}`, background: "#fff",
+    cursor: "pointer", fontFamily: "inherit",
+  },
+  mapListName: { fontFamily: "'Georgia', serif", fontSize: 15, fontWeight: 700, color: colors.text, margin: "0 0 2px" },
+  mapListMeta: { fontSize: 12, color: colors.textSoft, margin: 0 },
+  mapBackToListBtn: {
+    display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 14,
+    background: "none", border: "none", padding: 0, color: colors.accent,
+    fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
   },
   card: {
     textAlign: "left", border: `1.5px solid ${colors.border}`,
@@ -348,6 +380,7 @@ export const styles = {
   friendReviewRow: { display: "flex", gap: 10, marginBottom: 16 },
   friendReviewAvatar: { width: 32, height: 32, borderRadius: 999, objectFit: "cover", flexShrink: 0, background: colors.accentSoftBg },
   friendReviewName: { fontSize: 13, fontWeight: 700, color: colors.text, margin: "0 0 4px" },
+  googleReviewMeta: { fontSize: 11.5, color: colors.accent, letterSpacing: "0.02em", margin: "0 0 6px" },
   dialogTitle: { fontFamily: "'Georgia', serif", fontSize: 21, fontWeight: 700, margin: "0 0 4px", color: colors.text },
   dialogSub: { fontSize: 13, color: colors.textSoft, margin: "0 0 18px" },
 
@@ -457,6 +490,14 @@ export const styles = {
     background: colors.bg, borderRadius: 8, border: `1px solid ${colors.border}`,
   },
   detailEmptyNote: { fontSize: 12.5, color: colors.textSoft, fontStyle: "italic" },
+
+  placeAddress: {
+    display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6,
+    marginTop: 4, fontSize: 12.5, color: colors.textSoft,
+  },
+  hoursList: { listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 3 },
+  hoursItem: { fontSize: 12.5, color: colors.textSoft, lineHeight: 1.5 },
+  hoursDay: { fontWeight: 700, color: colors.text },
 
   searchRow: { display: "flex", gap: 8, marginBottom: 18 },
   input: {

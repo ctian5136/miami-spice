@@ -8,6 +8,7 @@ import { fetchMyLists, createList, addItemToList, setListPersonal } from "./lib/
 import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
 import BrowseView from "./components/BrowseView";
+import MapView from "./components/MapView";
 import MyListsView from "./components/MyListsView";
 import FriendsView from "./components/FriendsView";
 import EatenDialog from "./components/EatenDialog";
@@ -275,6 +276,14 @@ export default function App() {
                 user={user}
                 myLists={myLists}
                 onListsChanged={refreshLists}
+                stickyTop={compactVisible ? COMPACT_BAR_HEIGHT : 16}
+              />
+            )}
+
+            {tab === "map" && (
+              <MapView
+                picks={picks}
+                user={user}
                 stickyTop={compactVisible ? COMPACT_BAR_HEIGHT : 16}
               />
             )}

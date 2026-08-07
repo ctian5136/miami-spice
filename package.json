@@ -8,10 +8,12 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "fetch-places": "node --env-file=.env.local scripts/fetch-places-data.mjs",
     "predeploy": "npm run build",
     "deploy": "firebase deploy --only hosting,firestore:rules,storage"
   },
   "dependencies": {
+    "@googlemaps/markerclusterer": "^2.6.2",
     "firebase": "^12.17.0",
     "lucide-react": "^1.28.0",
     "react": "^19.2.8",
