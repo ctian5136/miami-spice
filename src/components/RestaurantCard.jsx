@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { MapPin, ListPlus, UtensilsCrossed, X } from "lucide-react";
 import { styles } from "../styles";
 import { PLACES_DATA } from "../data/placesData";
 import MichelinStar from "./MichelinStar";
+import Lightbox from "./Lightbox";
 
 export default function RestaurantCard({
   restaurant,
@@ -12,10 +13,12 @@ export default function RestaurantCard({
   onMarkEaten,
   onRemove,
   onOpenDetail,
+  friendsEaten,
 }) {
   const r = restaurant;
   const status = pick?.status;
   const place = PLACES_DATA[r.name];
+  const [lightboxSrc, setLightboxSrc] = useState(null);
 
   const cardStyle = {
     ...styles.card,
@@ -54,11 +57,38 @@ export default function RestaurantCard({
 
       <p style={styles.cardNote}>{r.note}</p>
 
+      {friendsEaten?.length > 0 && (
+        <div
+          style={styles.friendsAteRow}
+          title={`${friendsEaten.map((f) => f.displayName || "A friend").join(", ")} ate here`}
+        >
+          <UtensilsCrossed size={12} strokeWidth={2.5} />
+          <div style={styles.friendsAteAvatars}>
+            {friendsEaten.slice(0, 4).map((f, i) =>
+              f.photoURL ? (
+                <img
+                  key={f.uid}
+                  src={f.photoURL}
+                  alt=""
+                  style={{ ...styles.friendsAteAvatarImg, marginLeft: i === 0 ? 0 : -8, zIndex: 4 - i }}
+                />
+              ) : (
+                <div
+                  key={f.uid}
+                  style={{ ...styles.friendsAteAvatarImg, marginLeft: i === 0 ? 0 : -8, zIndex: 4 - i }}
+                />
+              )
+            )}
+          </div>
+          {friendsEaten.length > 4 && <span style={styles.friendsAteMore}>+{friendsEaten.length - 4}</span>}
+        </div>
+      )}
+
       {status === "eaten" && pick?.notes && <p style={styles.eatenNotes}>{pick.notes}</p>}
       {status === "eaten" && pick?.photos?.length > 0 && (
-        <div style={styles.photoStrip}>
+        <div style={styles.photoStrip} onClick={(e) => e.stopPropagation()}>
           {pick.photos.map((p, i) => (
-            <img key={i} src={p.url} alt="" style={styles.photoThumb} />
+            <img key={i} src={p.url} alt="" style={styles.photoThumb} onClick={() => setLightboxSrc(p.url)} />
           ))}
         </div>
       )}
@@ -91,6 +121,8 @@ export default function RestaurantCard({
           </button>
         </div>
       )}
+
+      <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </div>
   );
 }

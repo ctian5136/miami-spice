@@ -271,6 +271,7 @@ export const styles = {
     cursor: "pointer", fontFamily: "inherit",
   },
   mapSplitRow: { display: "flex", alignItems: "stretch", gap: 16, margin: "22px 24px 0" },
+  mapSplitRowEmbedded: { display: "flex", alignItems: "stretch", gap: 16, margin: "22px 0 0", padding: "0 24px" },
   mapContainer: {
     flex: "1 1 100%", minWidth: 0, borderRadius: 18, overflow: "hidden",
     border: `1.5px solid ${colors.border}`, boxShadow: "0 6px 20px rgba(59,46,34,0.08)",
@@ -320,6 +321,14 @@ export const styles = {
   },
   mealTag: { fontSize: 11.5, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: colors.textSoft },
 
+  friendsAteRow: { display: "flex", alignItems: "center", gap: 6, color: colors.textSoft },
+  friendsAteAvatars: { display: "flex", alignItems: "center" },
+  friendsAteAvatarImg: {
+    width: 20, height: 20, borderRadius: 999, objectFit: "cover",
+    border: "2px solid #fff", background: colors.accentSoftBg, flexShrink: 0,
+  },
+  friendsAteMore: { fontSize: 11, fontWeight: 700, color: colors.textSoft },
+
   cardActions: { display: "flex", gap: 8, flexWrap: "wrap" },
   actionBtn: {
     flex: 1, minWidth: 100, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
@@ -346,7 +355,23 @@ export const styles = {
 
   eatenNotes: { fontSize: 13, lineHeight: 1.5, color: "#4A4033", background: "#fff", borderRadius: 10, padding: "10px 12px", margin: 0 },
   photoStrip: { display: "flex", gap: 6, flexWrap: "wrap" },
-  photoThumb: { width: 64, height: 64, borderRadius: 10, objectFit: "cover", border: `1.5px solid ${colors.border}` },
+  photoThumb: { width: 64, height: 64, borderRadius: 10, objectFit: "cover", border: `1.5px solid ${colors.border}`, cursor: "zoom-in" },
+
+  lightboxOverlay: {
+    position: "fixed", inset: 0, background: "rgba(20,15,10,0.88)",
+    display: "flex", alignItems: "center", justifyContent: "center", padding: 32, zIndex: 200,
+    animation: "fadeIn 0.15s ease-out",
+  },
+  lightboxImage: {
+    maxWidth: "92vw", maxHeight: "92vh", borderRadius: 12,
+    objectFit: "contain", boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
+  },
+  lightboxCloseBtn: {
+    position: "fixed", top: 20, right: 20, width: 40, height: 40, borderRadius: 999,
+    background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.3)",
+    color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+    cursor: "pointer",
+  },
 
   empty: { textAlign: "center", padding: "60px 20px", color: colors.textSoft, fontSize: 15 },
   footer: {
@@ -381,6 +406,15 @@ export const styles = {
   friendReviewAvatar: { width: 32, height: 32, borderRadius: 999, objectFit: "cover", flexShrink: 0, background: colors.accentSoftBg },
   friendReviewName: { fontSize: 13, fontWeight: 700, color: colors.text, margin: "0 0 4px" },
   googleReviewMeta: { fontSize: 11.5, color: colors.accent, letterSpacing: "0.02em", margin: "0 0 6px" },
+  spiceBadge: {
+    display: "inline-flex", alignItems: "center", fontSize: 10, fontWeight: 700,
+    padding: "2px 8px", borderRadius: 999, marginLeft: 8, textTransform: "uppercase", letterSpacing: "0.04em",
+    background: "#FDE8D9", color: "#B23A1A", verticalAlign: "middle",
+  },
+  reviewToggleBtn: {
+    display: "inline-flex", alignItems: "center", gap: 4, background: "none", border: "none", padding: "4px 0 0",
+    color: colors.accent, fontSize: 12.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+  },
   dialogTitle: { fontFamily: "'Georgia', serif", fontSize: 21, fontWeight: 700, margin: "0 0 4px", color: colors.text },
   dialogSub: { fontSize: 13, color: colors.textSoft, margin: "0 0 18px" },
 

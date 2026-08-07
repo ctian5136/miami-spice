@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { MapPin, Phone, ExternalLink, CalendarCheck2, Navigation, X, Send } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { MapPin, Phone, ExternalLink, CalendarCheck2, Navigation, X, Send, ChevronDown } from "lucide-react";
 import { styles, colors } from "../styles";
 import { RESTAURANT_DETAILS } from "../data/restaurantDetails";
 import { PLACES_DATA } from "../data/placesData";
 import MichelinStar from "./MichelinStar";
+import Lightbox from "./Lightbox";
 import { fetchFriends, getPicks } from "../lib/social";
 import { fetchComments, addComment } from "../lib/lists";
 
@@ -23,6 +24,29 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose, 
   const [comments, setComments] = useState(null);
   const [commentText, setCommentText] = useState("");
   const [posting, setPosting] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState(null);
+  const [expandedReviews, setExpandedReviews] = useState(() => new Set());
+  const [showAllReviews, setShowAllReviews] = useState(false);
+
+  // Higher-rated reviews lead so the reviews that show by default (before
+  // "show more") skew positive; spice mentions break ties so they still
+  // surface without overriding a genuinely negative review's low rating.
+  const sortedReviews = useMemo(() => {
+    if (!place?.reviews) return [];
+    return [...place.reviews].sort((a, b) => {
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return (b.isSpiceMention ? 1 : 0) - (a.isSpiceMention ? 1 : 0);
+    });
+  }, [place]);
+
+  const toggleReviewExpanded = (i) => {
+    setExpandedReviews((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -194,7 +218,7 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose, 
                     {myPick.photos?.length > 0 && (
                       <div style={{ ...styles.photoStrip, marginTop: 8 }}>
                         {myPick.photos.map((p, i) => (
-                          <img key={i} src={p.url} alt="" style={styles.photoThumb} />
+                          <img key={i} src={p.url} alt="" style={styles.photoThumb} onClick={() => setLightboxSrc(p.url)} />
                         ))}
                       </div>
                     )}
@@ -228,7 +252,7 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose, 
                     {pick.photos?.length > 0 && (
                       <div style={{ ...styles.photoStrip, marginTop: 8 }}>
                         {pick.photos.map((p, i) => (
-                          <img key={i} src={p.url} alt="" style={styles.photoThumb} />
+                          <img key={i} src={p.url} alt="" style={styles.photoThumb} onClick={() => setLightboxSrc(p.url)} />
                         ))}
                       </div>
                     )}
@@ -237,28 +261,49 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose, 
               ))
             )}
 
-            {place?.reviews?.length > 0 && (
+            {sortedReviews.length > 0 && (
               <>
                 <div style={styles.detailSectionTitle}>Reviews from Google</div>
-                {place.reviews.map((rv, i) => (
-                  <div key={i} style={styles.friendReviewRow}>
-                    {rv.authorPhoto ? (
-                      <img src={rv.authorPhoto} alt="" style={styles.friendReviewAvatar} referrerPolicy="no-referrer" />
-                    ) : (
-                      <div style={styles.friendReviewAvatar} />
-                    )}
-                    <div style={{ minWidth: 0 }}>
-                      <p style={styles.friendReviewName}>{rv.author}</p>
-                      <p style={styles.googleReviewMeta}>
-                        {"★".repeat(rv.rating)}
-                        {"☆".repeat(5 - rv.rating)} · {rv.relativeTime}
-                      </p>
-                      <p style={{ ...styles.eatenNotes, background: colors.bg }}>
-                        {truncate(rv.text, REVIEW_TRUNCATE_LENGTH)}
-                      </p>
+                {(showAllReviews ? sortedReviews : sortedReviews.slice(0, 3)).map((rv, i) => {
+                  const isLong = rv.text.length > REVIEW_TRUNCATE_LENGTH;
+                  const isExpanded = expandedReviews.has(i);
+                  return (
+                    <div key={i} style={styles.friendReviewRow}>
+                      {rv.authorPhoto ? (
+                        <img src={rv.authorPhoto} alt="" style={styles.friendReviewAvatar} referrerPolicy="no-referrer" />
+                      ) : (
+                        <div style={styles.friendReviewAvatar} />
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <p style={styles.friendReviewName}>
+                          {rv.author}
+                          {rv.isSpiceMention && <span style={styles.spiceBadge}>🌶️ 2026 Miami Spice</span>}
+                        </p>
+                        <p style={styles.googleReviewMeta}>
+                          {"★".repeat(rv.rating)}
+                          {"☆".repeat(5 - rv.rating)} · {rv.relativeTime}
+                        </p>
+                        <p style={{ ...styles.eatenNotes, background: colors.bg }}>
+                          {isExpanded || !isLong ? rv.text : truncate(rv.text, REVIEW_TRUNCATE_LENGTH)}
+                        </p>
+                        {isLong && (
+                          <button style={styles.reviewToggleBtn} onClick={() => toggleReviewExpanded(i)}>
+                            {isExpanded ? "Show less" : "Read more"}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
+                {sortedReviews.length > 3 && (
+                  <button
+                    style={{ ...styles.reviewToggleBtn, marginTop: 2, marginBottom: 12 }}
+                    onClick={() => setShowAllReviews((s) => !s)}
+                  >
+                    {showAllReviews ? "Show fewer reviews" : `Show ${sortedReviews.length - 3} more reviews`}
+                    <ChevronDown size={13} strokeWidth={2.5} style={{ transform: showAllReviews ? "rotate(180deg)" : "none" }} />
+                  </button>
+                )}
               </>
             )}
 
@@ -300,6 +345,8 @@ export default function DetailModal({ restaurant, user, listId, picks, onClose, 
             )}
           </div>
         </div>
+
+        <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </>
   );
 

@@ -3,7 +3,7 @@ import { LogOut, User, HelpCircle } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import { styles, keyframes, colors, COMPACT_BAR_HEIGHT } from "./styles";
-import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests } from "./lib/social";
+import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests, fetchFriendsEatenMap } from "./lib/social";
 import { fetchMyLists, createList, addItemToList, setListPersonal } from "./lib/lists";
 import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
@@ -18,6 +18,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [picks, setPicks] = useState({});
+  const [friendsEatenMap, setFriendsEatenMap] = useState({});
   const [myLists, setMyLists] = useState([]);
   const [tab, setTab] = useState("browse");
   const [openListId, setOpenListId] = useState(null);
@@ -48,6 +49,20 @@ export default function App() {
     if (!user) return;
     setMyLists(await fetchMyLists(user.uid));
   };
+
+  useEffect(() => {
+    if (!user) {
+      setFriendsEatenMap({});
+      return;
+    }
+    let cancelled = false;
+    fetchFriendsEatenMap(user.uid).then((map) => {
+      if (!cancelled) setFriendsEatenMap(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -277,6 +292,7 @@ export default function App() {
                 myLists={myLists}
                 onListsChanged={refreshLists}
                 stickyTop={compactVisible ? COMPACT_BAR_HEIGHT : 16}
+                friendsEatenMap={friendsEatenMap}
               />
             )}
 
@@ -298,6 +314,7 @@ export default function App() {
                 onListsChanged={refreshLists}
                 openListId={openListId}
                 onOpenList={setOpenListId}
+                friendsEatenMap={friendsEatenMap}
               />
             )}
 

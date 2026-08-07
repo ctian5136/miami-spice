@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, UserPlus, Trash2, LogOut, X } from "lucide-react";
+import { ArrowLeft, UserPlus, Trash2, LogOut, X, Map as MapIcon, LayoutGrid } from "lucide-react";
 import { RESTAURANTS } from "../data/restaurants";
 import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
 import DetailModal from "./DetailModal";
+import RestaurantMap from "./RestaurantMap";
 import ListPicker from "./ListPicker";
 import InviteModal from "./InviteModal";
 import {
@@ -11,12 +12,15 @@ import {
   deleteList, leaveList, removeMember,
 } from "../lib/lists";
 
-export default function ListDetailView({ list, user, picks, onMarkEaten, onRemove, myLists, onListsChanged, onBack }) {
+export default function ListDetailView({ list, user, picks, onMarkEaten, onRemove, myLists, onListsChanged, onBack, friendsEatenMap = {} }) {
   const [members, setMembers] = useState([]);
   const [items, setItems] = useState(null);
   const [showInvite, setShowInvite] = useState(false);
   const [detailRestaurant, setDetailRestaurant] = useState(null);
   const [pickerRestaurant, setPickerRestaurant] = useState(null);
+  const [view, setView] = useState("list");
+  const [mapPanelMode, setMapPanelMode] = useState("closed");
+  const [mapSelected, setMapSelected] = useState(null);
 
   const load = useCallback(async () => {
     const [m, i] = await Promise.all([fetchListMembers(list), fetchListItems(list.id)]);
@@ -68,6 +72,18 @@ export default function ListDetailView({ list, user, picks, onMarkEaten, onRemov
       <div style={styles.listHeaderRow}>
         <h2 style={styles.sectionTitle}>{list.name}</h2>
         <div style={{ display: "flex", gap: 8 }}>
+          {restaurants.length > 0 && (
+            <button
+              style={styles.secondaryBtn}
+              onClick={() => setView((v) => (v === "list" ? "map" : "list"))}
+            >
+              {view === "list" ? (
+                <><MapIcon size={14} strokeWidth={2.5} /> Map view</>
+              ) : (
+                <><LayoutGrid size={14} strokeWidth={2.5} /> List view</>
+              )}
+            </button>
+          )}
           {!list.isPersonal && (
             <button style={styles.secondaryBtn} onClick={() => setShowInvite(true)}>
               <UserPlus size={14} strokeWidth={2.5} /> Invite
@@ -113,6 +129,17 @@ export default function ListDetailView({ list, user, picks, onMarkEaten, onRemov
         <div style={styles.empty}>Loading…</div>
       ) : restaurants.length === 0 ? (
         <div style={styles.empty}>No restaurants on this list yet — add some from Browse.</div>
+      ) : view === "map" ? (
+        <RestaurantMap
+          restaurants={restaurants.map((x) => x.restaurant)}
+          picks={picks}
+          user={user}
+          embedded
+          panelMode={mapPanelMode}
+          setPanelMode={setMapPanelMode}
+          selected={mapSelected}
+          setSelected={setMapSelected}
+        />
       ) : (
         <div style={styles.grid} className="restaurant-grid">
           {restaurants.map(({ item, restaurant }) => (
@@ -134,6 +161,7 @@ export default function ListDetailView({ list, user, picks, onMarkEaten, onRemov
                 onMarkEaten={onMarkEaten}
                 onRemove={onRemove}
                 onOpenDetail={(r) => setDetailRestaurant(r)}
+                friendsEaten={friendsEatenMap[restaurant.name]}
               />
             </div>
           ))}

@@ -136,6 +136,23 @@ export async function removeFriend(uid, friendUid) {
   ]);
 }
 
+// Restaurant name -> array of friend profiles who've marked it eaten, so
+// Browse/list cards can show "who's been here" without a per-card fetch.
+export async function fetchFriendsEatenMap(uid) {
+  const friends = await fetchFriends(uid);
+  const picksPerFriend = await Promise.all(friends.map((f) => getPicks(f.uid)));
+
+  const map = {};
+  friends.forEach((friend, i) => {
+    Object.entries(picksPerFriend[i]).forEach(([name, pick]) => {
+      if (pick.status !== "eaten") return;
+      if (!map[name]) map[name] = [];
+      map[name].push(friend);
+    });
+  });
+  return map;
+}
+
 // ---- picks ----
 
 export async function getPicks(uid) {

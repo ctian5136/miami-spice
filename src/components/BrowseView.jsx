@@ -7,7 +7,7 @@ import RestaurantCard from "./RestaurantCard";
 import DetailModal from "./DetailModal";
 import ListPicker from "./ListPicker";
 
-export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists, onListsChanged, stickyTop }) {
+export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists, onListsChanged, stickyTop, friendsEatenMap = {} }) {
   const [filter, setFilter] = useState("all");
   const [hood, setHood] = useState("All areas");
   const [meal, setMeal] = useState("All");
@@ -39,6 +39,7 @@ export default function BrowseView({ picks, onMarkEaten, onRemove, user, myLists
             onMarkEaten={onMarkEaten}
             onRemove={onRemove}
             onOpenDetail={setDetailRestaurant}
+            friendsEaten={friendsEatenMap[r.name]}
           />
         ))}
       </div>

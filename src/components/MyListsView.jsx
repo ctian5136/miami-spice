@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Map as MapIcon, LayoutGrid } from "lucide-react";
 import { RESTAURANTS } from "../data/restaurants";
 import { styles } from "../styles";
 import RestaurantCard from "./RestaurantCard";
 import DetailModal from "./DetailModal";
+import RestaurantMap from "./RestaurantMap";
 import ListDetailView from "./ListDetailView";
 import { createList, fetchListItems } from "../lib/lists";
 
@@ -20,6 +21,7 @@ export default function MyListsView({
   onListsChanged = noop,
   openListId: openListIdProp,
   onOpenList: onOpenListProp,
+  friendsEatenMap = {},
 }) {
   const [detailRestaurant, setDetailRestaurant] = useState(null);
   const [internalOpenListId, setInternalOpenListId] = useState(null);
@@ -28,6 +30,9 @@ export default function MyListsView({
   const [counts, setCounts] = useState({});
   const [newListName, setNewListName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [eatenView, setEatenView] = useState("list");
+  const [mapPanelMode, setMapPanelMode] = useState("closed");
+  const [mapSelected, setMapSelected] = useState(null);
 
   useEffect(() => {
     if (readOnly || myLists.length === 0) return;
@@ -67,6 +72,7 @@ export default function MyListsView({
         myLists={myLists}
         onListsChanged={onListsChanged}
         onBack={() => setOpenListId(null)}
+        friendsEatenMap={friendsEatenMap}
       />
     );
   }
@@ -111,13 +117,40 @@ export default function MyListsView({
       )}
 
       <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>{ownerLabel} Have Eaten list</h2>
-        <p style={styles.sectionSub}>
-          {eaten.length} spot{eaten.length === 1 ? "" : "s"} — compare notes and photos side by side
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+          <div>
+            <h2 style={styles.sectionTitle}>{ownerLabel} Have Eaten list</h2>
+            <p style={styles.sectionSub}>
+              {eaten.length} spot{eaten.length === 1 ? "" : "s"} — compare notes and photos side by side
+            </p>
+          </div>
+          {eaten.length > 0 && (
+            <button
+              style={{ ...styles.secondaryBtn, flexShrink: 0 }}
+              onClick={() => setEatenView((v) => (v === "list" ? "map" : "list"))}
+            >
+              {eatenView === "list" ? (
+                <><MapIcon size={14} strokeWidth={2.5} /> Map view</>
+              ) : (
+                <><LayoutGrid size={14} strokeWidth={2.5} /> List view</>
+              )}
+            </button>
+          )}
+        </div>
       </div>
       {eaten.length === 0 ? (
         <div style={styles.empty}>Nothing here yet.</div>
+      ) : eatenView === "map" ? (
+        <RestaurantMap
+          restaurants={eaten}
+          picks={picks}
+          user={user}
+          embedded
+          panelMode={mapPanelMode}
+          setPanelMode={setMapPanelMode}
+          selected={mapSelected}
+          setSelected={setMapSelected}
+        />
       ) : (
         <div style={styles.grid} className="restaurant-grid">
           {eaten.map((r) => (
@@ -129,6 +162,7 @@ export default function MyListsView({
               onMarkEaten={onMarkEaten}
               onRemove={onRemove}
               onOpenDetail={setDetailRestaurant}
+              friendsEaten={friendsEatenMap[r.name]}
             />
           ))}
         </div>
