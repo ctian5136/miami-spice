@@ -41,6 +41,9 @@ export const keyframes = `
     .filters-panel.filters-panel-open{display:flex !important}
     .mobile-nav{display:flex !important}
     .page{padding-bottom:76px !important}
+    .map-split-row{flex-direction:column !important}
+    .map-split-row > .map-container{flex:1 1 auto !important}
+    .map-split-row > .map-panel{flex:1 1 auto !important; max-width:100% !important}
   }
   @media (max-width:960px) and (min-width:641px){
     .restaurant-grid{grid-template-columns:repeat(2, minmax(0, 1fr)) !important}

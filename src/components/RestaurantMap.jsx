@@ -102,29 +102,32 @@ export default function RestaurantMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list, mapReady]);
 
-  // Nudge Google Maps to recompute its size after the panel opens/closes,
-  // since resizing the flex container doesn't fire a native resize event.
+  // Google Maps snapshots its container's size on init and never notices
+  // CSS-driven resizes on its own (panel open/close, mobile layout settling
+  // after the sidebar collapses, orientation change, etc) — a ResizeObserver
+  // catches all of those and nudges it to remeasure.
   useEffect(() => {
-    if (!mapReady || !mapRef.current || !window.google) return;
-    const timer = setTimeout(() => {
-      const map = mapRef.current;
+    if (!mapReady || !mapRef.current || !window.google || !mapDivRef.current) return;
+    const map = mapRef.current;
+    const observer = new ResizeObserver(() => {
       const center = map.getCenter();
       window.google.maps.event.trigger(map, "resize");
       if (center) map.setCenter(center);
-    }, 220);
-    return () => clearTimeout(timer);
-  }, [panelOpen, mapReady]);
+    });
+    observer.observe(mapDivRef.current);
+    return () => observer.disconnect();
+  }, [mapReady]);
 
   return loadError ? (
     <div style={styles.empty}>Couldn't load the map. Check your connection and try again.</div>
   ) : (
-    <div style={embedded ? styles.mapSplitRowEmbedded : styles.mapSplitRow}>
-      <div style={{ ...styles.mapContainer, ...(panelOpen ? styles.mapContainerNarrow : {}) }}>
+    <div className="map-split-row" style={embedded ? styles.mapSplitRowEmbedded : styles.mapSplitRow}>
+      <div className="map-container" style={{ ...styles.mapContainer, ...(panelOpen ? styles.mapContainerNarrow : {}) }}>
         <div ref={mapDivRef} style={styles.mapCanvas} />
       </div>
 
       {panelOpen && (
-        <div style={styles.mapPanel}>
+        <div className="map-panel" style={styles.mapPanel}>
           {panelMode === "list" ? (
             <>
               <p style={styles.mapPanelListHeader}>{list.length} spot{list.length === 1 ? "" : "s"}</p>
