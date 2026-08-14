@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { ArrowLeft, Check, X, UserPlus, Search, Users } from "lucide-react";
 import { styles, colors } from "../styles";
 import MyListsView from "./MyListsView";
+import ShareInviteLink from "./ShareInviteLink";
+import { buildInviteUrl } from "../lib/invite";
 import {
   searchUsers, sendFriendRequest, cancelFriendRequest,
   fetchIncomingRequests, fetchOutgoingRequests,
@@ -261,6 +263,14 @@ export default function FriendsView({ user }) {
         </div>
       </div>
       <p style={styles.sectionSub}>See what your friends want to eat and have eaten.</p>
+
+      <ShareInviteLink
+        url={buildInviteUrl(user.uid)}
+        title="Join me on Miami Spice"
+        text="Track Miami Spice restaurants with me — open this to add me as a friend:"
+        label="Invite friends"
+        sub="Share this link — anyone who opens it and signs in becomes your friend."
+      />
 
       {friends.length > 5 && (
         <input

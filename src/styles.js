@@ -253,7 +253,7 @@ export const styles = {
     background: "#fff", color: colors.textSoft, fontSize: 13, fontWeight: 600,
     cursor: "pointer", transition: "all 0.15s",
   },
-  chipActive: { background: colors.accent, borderColor: colors.accent, color: "#fff" },
+  chipActive: { background: colors.accent, border: `1.5px solid ${colors.accent}`, color: "#fff" },
   selects: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 4 },
   select: {
     padding: "9px 40px 9px 14px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
@@ -307,8 +307,8 @@ export const styles = {
     transition: "transform 0.15s, box-shadow 0.15s, border-color 0.15s",
     fontFamily: "inherit", boxShadow: "0 1px 2px rgba(59,46,34,0.05)",
   },
-  cardWant: { borderColor: colors.accent, background: "#FBF3EA", boxShadow: "0 6px 20px rgba(169,104,63,0.14)" },
-  cardEaten: { borderColor: colors.eaten, background: colors.eatenSoftBg, boxShadow: "0 6px 20px rgba(110,123,79,0.14)" },
+  cardWant: { border: `1.5px solid ${colors.accent}`, background: "#FBF3EA", boxShadow: "0 6px 20px rgba(169,104,63,0.14)" },
+  cardEaten: { border: `1.5px solid ${colors.eaten}`, background: colors.eatenSoftBg, boxShadow: "0 6px 20px rgba(110,123,79,0.14)" },
   cardTop: { display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" },
   cardHead: { flex: 1 },
   starRow: { display: "flex", gap: 3, marginBottom: 6 },
@@ -339,8 +339,8 @@ export const styles = {
     background: "#fff", color: colors.textSoft, fontSize: 12.5, fontWeight: 700,
     cursor: "pointer", fontFamily: "inherit",
   },
-  actionBtnWant: { background: colors.accent, borderColor: colors.accent, color: "#fff" },
-  actionBtnEaten: { background: colors.eaten, borderColor: colors.eaten, color: "#fff" },
+  actionBtnWant: { background: colors.accent, border: `1.5px solid ${colors.accent}`, color: "#fff" },
+  actionBtnEaten: { background: colors.eaten, border: `1.5px solid ${colors.eaten}`, color: "#fff" },
   removeBtn: {
     padding: "9px 10px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
     background: "#fff", color: "#9A7358", fontSize: 12.5, fontWeight: 700, cursor: "pointer",
@@ -460,7 +460,7 @@ export const styles = {
     display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "14px 16px",
     borderRadius: 16, border: `1.5px solid ${colors.border}`, marginBottom: 10, background: colors.cardBg,
   },
-  listPickerRowChecked: { borderColor: colors.eaten, background: colors.eatenSoftBg },
+  listPickerRowChecked: { border: `1.5px solid ${colors.eaten}`, background: colors.eatenSoftBg },
   listPickerName: { fontFamily: "'Georgia', serif", fontSize: 18, fontWeight: 700, color: colors.text, margin: 0 },
   listPickerRowMeta: {
     display: "flex", alignItems: "center", gap: 5, fontSize: 12.5, color: colors.textSoft, marginTop: 3,
@@ -473,7 +473,7 @@ export const styles = {
     cursor: "pointer", fontFamily: "inherit",
   },
   listPickerAddedBtn: {
-    borderColor: colors.eaten, background: colors.eatenSoftBg, color: colors.eatenDark,
+    border: `1.5px solid ${colors.eaten}`, background: colors.eatenSoftBg, color: colors.eatenDark,
   },
   createListLink: {
     display: "inline-flex", alignItems: "center", gap: 6, marginTop: 6,
@@ -562,5 +562,22 @@ export const styles = {
   searchInputIcon: {
     position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
     color: colors.textSoft, pointerEvents: "none", display: "flex",
+  },
+
+  inviteLinkCard: {
+    padding: "14px 16px", borderRadius: 14, border: `1.5px solid ${colors.border}`,
+    background: colors.bg, marginBottom: 18,
+  },
+  inviteLinkRow: { display: "flex", gap: 8 },
+  inviteLinkInput: {
+    flex: 1, minWidth: 0, padding: "10px 12px", borderRadius: 10, border: `1.5px solid ${colors.border}`,
+    fontFamily: "inherit", fontSize: 12.5, color: colors.textSoft, background: "#fff",
+  },
+
+  toastBanner: {
+    position: "fixed", top: 16, left: "50%", transform: "translateX(-50%)", zIndex: 60,
+    background: colors.eatenDark, color: "#fff", fontSize: 13.5, fontWeight: 700,
+    padding: "12px 20px", borderRadius: 12, boxShadow: "0 12px 30px rgba(43,35,28,0.3)",
+    animation: "fadeIn 0.15s ease-out",
   },
 };

@@ -44,9 +44,19 @@ service cloud.firestore {
     // its items/comments; only the creator can delete the whole list.
     match /lists/{listId} {
       allow read: if request.auth != null && request.auth.uid in resource.data.memberIds;
-      // Personal lists can be renamed but never gain/lose members.
-      allow update: if request.auth != null && request.auth.uid in resource.data.memberIds &&
-        (resource.data.isPersonal != true || request.resource.data.memberIds == resource.data.memberIds);
+      // Personal lists can be renamed but never gain/lose members. Existing
+      // members can change anything (rename, invite/remove others); someone
+      // who isn't a member yet may only add themself (invite-link self-join
+      // on a shared, non-personal list) and nothing else.
+      allow update: if request.auth != null &&
+        (
+          (request.auth.uid in resource.data.memberIds &&
+            (resource.data.isPersonal != true || request.resource.data.memberIds == resource.data.memberIds)) ||
+          (resource.data.isPersonal != true &&
+            !(request.auth.uid in resource.data.memberIds) &&
+            request.resource.data.memberIds == resource.data.memberIds.concat([request.auth.uid]) &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(["memberIds"]))
+        );
       allow create: if request.auth != null &&
         request.auth.uid in request.resource.data.memberIds &&
         request.auth.uid == request.resource.data.ownerId;

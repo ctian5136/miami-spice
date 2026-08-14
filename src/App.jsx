@@ -3,8 +3,9 @@ import { LogOut, User, HelpCircle } from "lucide-react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import { styles, keyframes, colors, COMPACT_BAR_HEIGHT } from "./styles";
-import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests, fetchFriendsEatenMap } from "./lib/social";
-import { fetchMyLists, createList, addItemToList, setListPersonal } from "./lib/lists";
+import { upsertProfile, getPicks, saveEaten, removePick, fetchIncomingRequests, fetchFriendsEatenMap, connectAsFriends, getProfile } from "./lib/social";
+import { fetchMyLists, createList, addItemToList, setListPersonal, inviteToList } from "./lib/lists";
+import { readInviteParams, clearInviteParams } from "./lib/invite";
 import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
 import BrowseView from "./components/BrowseView";
@@ -27,7 +28,10 @@ export default function App() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [compactVisible, setCompactVisible] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [inviteToast, setInviteToast] = useState("");
   const sentinelRef = useRef(null);
+  const inviteProcessedRef = useRef(false);
+  const pendingInvite = !user ? readInviteParams() : null;
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
@@ -107,6 +111,41 @@ export default function App() {
     fetchIncomingRequests(user.uid).then((reqs) => setIncomingCount(reqs.length));
   }, [user, tab]);
 
+  // Someone opened our (or a list's) invite link: connect as friends, join
+  // the list if one was attached, then strip the params so a refresh doesn't
+  // redo it.
+  useEffect(() => {
+    if (!user || inviteProcessedRef.current) return;
+    const invite = readInviteParams();
+    if (!invite) return;
+    inviteProcessedRef.current = true;
+
+    if (invite.inviterUid === user.uid) {
+      clearInviteParams();
+      return;
+    }
+
+    (async () => {
+      const inviter = await getProfile(invite.inviterUid);
+      if (!inviter) {
+        clearInviteParams();
+        return;
+      }
+      await connectAsFriends(user.uid, invite.inviterUid);
+      if (invite.listId) {
+        try {
+          await inviteToList(invite.listId, user.uid);
+          setMyLists(await fetchMyLists(user.uid));
+        } catch {
+          // list may since be deleted/personal/already-joined — friending still succeeded
+        }
+      }
+      clearInviteParams();
+      setInviteToast(`You and ${inviter.displayName || "your friend"} are now friends`);
+      setTimeout(() => setInviteToast(""), 4000);
+    })();
+  }, [user]);
+
   useEffect(() => {
     if (!sentinelRef.current) return;
     const observer = new IntersectionObserver(([entry]) => setCompactVisible(!entry.isIntersecting), {
@@ -152,8 +191,9 @@ export default function App() {
           <div style={styles.signInKicker}>Miami</div>
           <h1 style={styles.signInWord}>SPICE</h1>
           <p style={styles.signInSub}>
-            Sign in to build your list of picks — it'll be saved to your account and follow you
-            across devices.
+            {pendingInvite
+              ? "You've been invited by a friend — sign in and you'll be connected automatically."
+              : "Sign in to build your list of picks — it'll be saved to your account and follow you across devices."}
           </p>
           <button onClick={login} style={styles.signInButton}>
             Continue with Google
@@ -198,6 +238,8 @@ export default function App() {
   return (
     <div style={styles.page} className="page">
       <style>{keyframes}</style>
+
+      {inviteToast && <div style={styles.toastBanner}>{inviteToast}</div>}
 
       <div style={{ ...styles.compactBar, ...(compactVisible ? styles.compactBarVisible : {}) }}>
         <div style={styles.compactWord}>

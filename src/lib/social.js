@@ -105,12 +105,19 @@ export async function fetchOutgoingRequests(uid) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((r) => r.status === "pending");
 }
 
+// Both sides of a friendship are just presence docs, and Firestore rules let
+// either uid write either side — so one signed-in party can create the full
+// mutual link unilaterally (accepting a request, or opening someone's invite link).
+export async function connectAsFriends(uidA, uidB) {
+  await Promise.all([
+    setDoc(doc(db, "users", uidA, "friends", uidB), { addedAt: Date.now() }, { merge: true }),
+    setDoc(doc(db, "users", uidB, "friends", uidA), { addedAt: Date.now() }, { merge: true }),
+  ]);
+}
+
 export async function acceptFriendRequest(request) {
   const { from, to } = request;
-  await Promise.all([
-    setDoc(doc(db, "users", to, "friends", from), { addedAt: Date.now() }),
-    setDoc(doc(db, "users", from, "friends", to), { addedAt: Date.now() }),
-  ]);
+  await connectAsFriends(from, to);
   await deleteDoc(doc(db, "friendRequests", requestId(from, to)));
 }
 

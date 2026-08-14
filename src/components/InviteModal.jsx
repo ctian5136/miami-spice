@@ -3,6 +3,8 @@ import { X, Search, Plus } from "lucide-react";
 import { styles, colors } from "../styles";
 import { inviteToList } from "../lib/lists";
 import { searchUsers, fetchFriends } from "../lib/social";
+import ShareInviteLink from "./ShareInviteLink";
+import { buildInviteUrl } from "../lib/invite";
 
 export default function InviteModal({ list, user, onClose, onListsChanged }) {
   const [friends, setFriends] = useState([]);
@@ -72,6 +74,14 @@ export default function InviteModal({ list, user, onClose, onListsChanged }) {
             autoFocus
           />
         </div>
+
+        <ShareInviteLink
+          url={buildInviteUrl(user.uid, list.id)}
+          title={`Join "${list.name}" on Miami Spice`}
+          text={`Track Miami Spice restaurants together — open this to join my list "${list.name}":`}
+          label="Share a link to this list"
+          sub="Anyone who opens it and signs in becomes your friend and joins this list."
+        />
 
         <p style={styles.detailSectionTitle}>{searchText.trim() ? "Search results" : "Friends"}</p>
 
